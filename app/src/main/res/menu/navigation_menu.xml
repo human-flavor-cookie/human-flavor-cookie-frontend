@@ -6,7 +6,7 @@
         android:title="MAIN" />
 
     <item
-        android:id="@+id/nav_board"
+        android:id="@+id/nav_cookie"
         android:icon="@drawable/ic_board"
         android:title="BOARD" />
 

@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
                     openFragment(MainFragment(), Constants.MAIN)
                     true
                 }
-                R.id.nav_board -> {
+                R.id.nav_cookie -> {
                     openFragment(CookieFragment(), Constants.COOKIE)
                     true
                 }
