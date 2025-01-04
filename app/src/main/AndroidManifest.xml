@@ -14,6 +14,9 @@
     <uses-permission android:name="android.permission.health.READ_EXERCISE"/>
     <uses-permission android:name="android.permission.health.READ_FLOORS_CLIMBED"/>
 
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <!--Health Connect-->
     <queries>
         <package android:name="com.google.android.apps.healthdata" />
@@ -31,6 +34,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Fitness"
         tools:targetApi="31">
+
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyCDHisZSnBUQKdL85Ct69-pyZS9u6Q7KKI" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">

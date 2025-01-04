@@ -12,7 +12,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.LinearLayout
-import androidx.core.util.TypedValueCompat.pxToDp
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.PermissionController
 import androidx.health.connect.client.permission.HealthPermission
@@ -29,7 +28,6 @@ import com.example.fitness.Constants
 import com.example.fitness.R
 import com.example.fitness.databinding.FragmentMainBinding
 import com.example.fitness.util.CustomToast
-import com.google.common.io.Resources
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -156,6 +154,14 @@ class MainFragment : Fragment() {
             val progressLayoutParams = binding.mainProgress.layoutParams as FrameLayout.LayoutParams
             progressLayoutParams.width = dpToPx(requireContext(), (distance / 1000 / 5 * 315).toInt())
             binding.mainProgress.layoutParams = progressLayoutParams
+
+            //정지 버튼 클릭
+            binding.mainStart.setOnClickListener {
+                val transaction = parentFragmentManager.beginTransaction()
+                transaction.replace(R.id.nav_host_fragment, RunningFragment())
+                transaction.addToBackStack(null)
+                transaction.commit()
+            }
         }
     }
 
