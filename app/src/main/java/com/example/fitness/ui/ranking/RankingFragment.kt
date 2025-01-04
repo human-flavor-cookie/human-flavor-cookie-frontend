@@ -124,21 +124,5 @@ class RankingFragment : Fragment(R.layout.fragment_ranking) {
             }
         })
 
-//        // 초기화 시 첫 번째 탭 배경색 설정
-//        val firstTab = tabLayout.getTabAt(0)
-//        firstTab?.view?.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.cookie_brown))
-//
-//// 초기화 시 첫 번째 탭 데이터 설정
-//        if (rankingList_all.isNotEmpty()) {
-//            val firstItem = rankingList_all[0]
-//            binding.first.setImageResource(firstItem.imageResource)
-//            binding.firstName.text = firstItem.name
-//            val secondItem = rankingList_all[1]
-//            binding.second.setImageResource(secondItem.imageResource)
-//            binding.secondName.text = secondItem.name
-//            val thirdItem = rankingList_all[2]
-//            binding.third.setImageResource(thirdItem.imageResource)
-//            binding.thirdName.text = thirdItem.name
-//        }
     }
 }

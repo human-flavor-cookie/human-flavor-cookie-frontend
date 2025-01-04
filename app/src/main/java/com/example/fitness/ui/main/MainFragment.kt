@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.core.util.TypedValueCompat.pxToDp
 import androidx.health.connect.client.HealthConnectClient
@@ -28,6 +29,7 @@ import androidx.health.connect.client.time.TimeRangeFilter
 import com.example.fitness.Constants
 import com.example.fitness.R
 import com.example.fitness.databinding.FragmentMainBinding
+import com.example.fitness.ui.cookie.CookieAdapter
 import com.example.fitness.util.CustomToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
