@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 선택된 탭 배경 -->
+    <item android:drawable="@color/cookie_brown" android:state_selected="true" />
+    <!-- 비선택된 탭 배경 -->
+    <item android:drawable="@color/tab_gray" />
+</selector>
