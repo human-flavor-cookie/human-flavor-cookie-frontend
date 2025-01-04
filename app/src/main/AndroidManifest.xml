@@ -39,6 +39,8 @@
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyCDHisZSnBUQKdL85Ct69-pyZS9u6Q7KKI" />
 
+        <activity android:name=".LoginActivity" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">

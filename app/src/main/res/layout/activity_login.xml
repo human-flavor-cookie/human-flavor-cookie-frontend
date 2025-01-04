@@ -116,5 +116,19 @@
                 android:src="@drawable/google_login" />
         </FrameLayout>
 
+        <TextView
+            android:id="@+id/login_signup"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginVertical="5dp"
+            android:text="@string/signup_text"
+            android:layout_marginHorizontal="40dp"
+            android:gravity="end"
+            android:textSize="15sp"
+            android:lineSpacingExtra="1dp"
+            android:fontFamily="@font/cookierun_regular"
+            android:paintFlags="underline"
+            android:textColor="#DFA66B" />
+
     </LinearLayout>
 </LinearLayout>
