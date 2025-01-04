@@ -153,6 +153,7 @@
             android:text="오늘의 목표: 15km" />
 
         <ImageView
+            android:id="@+id/main_start"
             android:layout_marginTop="50dp"
             android:layout_width="370dp"
             android:layout_height="45dp"
