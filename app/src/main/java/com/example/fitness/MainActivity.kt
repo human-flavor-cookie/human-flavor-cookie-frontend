@@ -1,5 +1,6 @@
 package com.example.fitness
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -19,12 +20,18 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // 로그인 상태 확인
+        if (!isUserLoggedIn()) {
+            // 로그인되지 않은 경우 LoginActivity로 이동
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+            finish() // MainActivity 종료
+            return
+        }
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        // user 저장하고 닉네임 부여 (firebase)
-
-        // 하단 탭 이동 설정
         initBottomNavigation(savedInstanceState)
     }
 
@@ -67,4 +74,9 @@ class MainActivity : AppCompatActivity() {
         transaction.commit()
     }
 
+    private fun isUserLoggedIn(): Boolean {
+        //로그인 기능 구현
+        val sharedPref = getSharedPreferences("user_pref", MODE_PRIVATE)
+        return sharedPref.getBoolean("isLoggedIn", false)
+    }
 }
