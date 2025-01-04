@@ -147,7 +147,7 @@
         android:id="@+id/textView6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="586dp"
+        android:layout_marginTop="563dp"
         android:text="탈퇴하기"
         android:textColor="@color/my_page_gray"
         android:textSize="9sp"
