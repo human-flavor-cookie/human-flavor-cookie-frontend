@@ -29,7 +29,6 @@ import com.example.fitness.Constants
 import com.example.fitness.R
 import com.example.fitness.databinding.FragmentMainBinding
 import com.example.fitness.util.CustomToast
-import com.google.common.io.Resources
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -146,7 +145,7 @@ class MainFragment : Fragment() {
         CoroutineScope(Dispatchers.Main).launch {
             binding.mainStep.text = "오늘 총 걸음수 : \n$steps"
             binding.mainGoal.text = String.format("%.3f km", distance / 1000)
-            binding.mainPercent.text = String.format("%.1f%%", distance / 1000 / 5)
+            binding.mainPercent.text = String.format("%.1f%%", distance / 10 / 5)
 
             //TODO: 목표 맞춰 쿠키 이동
             val cookieLayoutParams = binding.mainCookie.layoutParams as LinearLayout.LayoutParams
