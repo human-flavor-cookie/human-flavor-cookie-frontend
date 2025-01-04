@@ -2,6 +2,8 @@ package com.example.fitness.ui.main
 
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
+import android.app.Dialog
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import com.google.android.gms.location.LocationRequest;
@@ -14,10 +16,14 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.LinearInterpolator
 import android.view.animation.TranslateAnimation
+import android.widget.Button
+import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.example.fitness.MainActivity
 import com.example.fitness.R
 import com.example.fitness.databinding.FragmentRunningBinding
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -64,6 +70,11 @@ class RunningFragment : Fragment() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 
         binding.apply {
+            val stopButton = view.findViewById<ImageView>(R.id.stop_button)
+            stopButton.setOnClickListener {
+                showCustomDialog()
+            }
+
             /**
              * 애니메이션
              */
@@ -129,9 +140,53 @@ class RunningFragment : Fragment() {
                     1001
                 )
             }
+
+
         }
     }
 
+    /**
+     * 커스텀 팝업 Dialog 띄우기
+     */
+    private fun showCustomDialog() {
+        val dialog = Dialog(requireContext())
+        dialog.setContentView(R.layout.running_end_layout)
+
+        val timeText: TextView = dialog.findViewById(R.id.time_user)
+        val distanceText: TextView = dialog.findViewById(R.id.distance_user)
+        val average_paceText: TextView = dialog.findViewById(R.id.average_pace_user)
+        val coinText: TextView = dialog.findViewById(R.id.coin_user)
+        val closeButton: ImageButton = dialog.findViewById(R.id.close_button)
+
+        // 팝업 내용 설정
+        timeText.text = formatTime(elapsedTime)
+        distanceText.text = String.format("%.2f km", totalDistance / 1000)
+        average_paceText.text = calculateAveragePace(elapsedTime, totalDistance) // 평균 페이스 표시
+        val coinNum = (totalDistance / 10).toInt()
+        coinText.text = coinNum.toString()
+        // 닫기 버튼 클릭 이벤트
+        closeButton.setOnClickListener {
+            dialog.dismiss() // 팝업 닫기
+
+            // 메인 화면으로 이동
+            val intent = Intent(requireContext(), MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(intent)
+            requireActivity().finish() // 현재 액티비티 종료
+        }
+        dialog.show() // 팝업 표시
+    }
+
+    private fun calculateAveragePace(elapsedTime: Long, totalDistance: Float): String {
+        // 경과 시간(초)와 총 거리(미터)가 모두 양수일 경우 계산
+        if (elapsedTime > 0 && totalDistance > 0) {
+            val paceInSeconds = elapsedTime / (totalDistance / 1000) // 초/1km
+            val minutes = (paceInSeconds / 60).toInt() // 분
+            val seconds = (paceInSeconds % 60).toInt() // 초
+            return String.format("%d'%02d''", minutes, seconds) // 예: "6'30''"
+        }
+        return "0'00''" // 데이터가 없는 경우
+    }
     // 시간 포맷 함수 (hh:mm:ss)
     @SuppressLint("DefaultLocale")
     private fun formatTime(seconds: Long): String {
