@@ -1,6 +1,7 @@
 package com.example.fitness.ui.main
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -9,7 +10,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
+import android.widget.FrameLayout
+import android.widget.LinearLayout
+import androidx.core.util.TypedValueCompat.pxToDp
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.PermissionController
 import androidx.health.connect.client.permission.HealthPermission
@@ -26,6 +29,7 @@ import com.example.fitness.Constants
 import com.example.fitness.R
 import com.example.fitness.databinding.FragmentMainBinding
 import com.example.fitness.util.CustomToast
+import com.google.common.io.Resources
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -56,13 +60,13 @@ class MainFragment : Fragment() {
         PermissionController.createRequestPermissionResultContract()
     ) { granted ->
         if (granted.containsAll(permissionList)) {
-            Log.d("MAIN ACTIVITY", "requestPermissions success ==== ")
+            Log.d("MAIN ACTIVITY", "requestPermissions success")
             CoroutineScope(Dispatchers.IO).launch {
                 readStepsData()
             }
         } else {
             CustomToast.createToast(requireContext(), "건강정보 가져오기에 실패하였습니다.\n권한을 추가하거나 헬스 커넥트 앱을 다운로드 해주세요.")?.show()
-            Log.d("MAIN ACTIVITY", "requestPermissions fail ////////////////// ")
+            Log.d("MAIN ACTIVITY", "requestPermissions fail")
             activity?.finish()
             openPlayStoreForHealthConnect()
         }
@@ -82,8 +86,7 @@ class MainFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding =
-            DataBindingUtil.inflate(layoutInflater, R.layout.fragment_main, container, false)
+        _binding = FragmentMainBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -119,7 +122,7 @@ class MainFragment : Fragment() {
     }
 
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n", "DefaultLocale")
     private suspend fun readStepsData() {
         val now: LocalDateTime = LocalDateTime.now()
         val startOfDay = LocalDateTime.of(now.toLocalDate(), LocalTime.MIDNIGHT)
@@ -132,28 +135,28 @@ class MainFragment : Fragment() {
         val response = healthConnectClient.readRecords(request)
         val steps = response.records.sumOf { it.count }
 
-        //토탈 칼로리
-        val totalCaloriesRequest = ReadRecordsRequest(
-            recordType = TotalCaloriesBurnedRecord::class,
-            timeRangeFilter = TimeRangeFilter.between(startOfDay, now),
-        )
-        val totalCaloriesResponse = healthConnectClient.readRecords(totalCaloriesRequest)
-        val totalCalories = totalCaloriesResponse.records.sumOf { it.energy.inCalories }
-
-        //활동 칼로리
-        val activeCaloriesRequest = ReadRecordsRequest(
+        //걸음 m
+        val distanceRequest = ReadRecordsRequest(
             recordType = DistanceRecord::class,
             timeRangeFilter = TimeRangeFilter.between(startOfDay, now),
         )
-        val activeCaloriesResponse = healthConnectClient.readRecords(activeCaloriesRequest)
-        val activeCalories = activeCaloriesResponse.records.sumOf { it.distance.inMeters }
+        val distanceResponse = healthConnectClient.readRecords(distanceRequest)
+        val distance = distanceResponse.records.sumOf { it.distance.inMeters }
 
         CoroutineScope(Dispatchers.Main).launch {
-            binding.tvStepCount.text = steps.toString()
-            binding.tvTotalCaloriesCount.text = totalCalories.toString()
-            binding.tvActiveCaloriesCount.text = activeCalories.toString()
-        }
+            binding.mainStep.text = "오늘 총 걸음수 : \n$steps"
+            binding.mainGoal.text = String.format("%.3f km", distance / 1000)
+            binding.mainPercent.text = String.format("%.1f%%", distance / 1000 / 5)
 
+            //TODO: 목표 맞춰 쿠키 이동
+            val cookieLayoutParams = binding.mainCookie.layoutParams as LinearLayout.LayoutParams
+            binding.mainCookie.setPadding(dpToPx(requireContext(), (distance / 1000 / 5 * 315 - 50).toInt()), 0, 0, 0)
+            binding.mainCookie.layoutParams = cookieLayoutParams
+
+            val progressLayoutParams = binding.mainProgress.layoutParams as FrameLayout.LayoutParams
+            progressLayoutParams.width = dpToPx(requireContext(), (distance / 1000 / 5 * 315).toInt())
+            binding.mainProgress.layoutParams = progressLayoutParams
+        }
     }
 
     private fun openPlayStoreForHealthConnect() {
@@ -162,5 +165,10 @@ class MainFragment : Fragment() {
             setPackage("com.android.vending")
         }
         startActivity(intent)
+    }
+
+    fun dpToPx(context: Context, dp: Int): Int {
+        val density = context.resources.displayMetrics.density
+        return (dp * density).toInt()
     }
 }
