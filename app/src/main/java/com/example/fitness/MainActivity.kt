@@ -8,7 +8,9 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.example.fitness.databinding.ActivityMainBinding
+import com.example.fitness.ui.cookie.CookieFragment
 import com.example.fitness.ui.main.MainFragment
+import com.example.fitness.ui.my.MyFragment
 import com.example.fitness.ui.ranking.RankingFragment
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -45,11 +47,15 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_board -> {
-                    //openFragment(BoardFragment(), HwConstants.BOARD)
+                    openFragment(CookieFragment(), Constants.COOKIE)
                     true
                 }
-                R.id.nav_mypage -> {
-                    openFragment(RankingFragment(), Constants.MYPAGE)
+                R.id.nav_ranking -> {
+                    openFragment(RankingFragment(), Constants.RANKING)
+                    true
+                }
+                R.id.nav_my -> {
+                    openFragment(MyFragment(), Constants.MYPAGE)
                     true
                 }
                 else -> false

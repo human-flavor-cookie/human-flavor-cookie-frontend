@@ -11,7 +11,12 @@
         android:title="BOARD" />
 
     <item
-        android:id="@+id/nav_mypage"
+        android:id="@+id/nav_ranking"
         android:icon="@drawable/ic_mypage"
-        android:title="MYPAGE" />
+        android:title="RANKING" />
+
+    <item
+        android:id="@+id/nav_my"
+        android:icon="@drawable/ic_mypage"
+        android:title="MY" />
 </menu>
