@@ -1,0 +1,7 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@android:color/white" /> <!-- 배경색 (필요에 따라) -->
+    <stroke
+        android:color="@color/font_color"
+        android:width="10dp" />  <!-- 외곽선 두께 -->
+    <corners android:radius="4dp" />  <!-- 모서리 둥글게 설정 -->
+</shape>

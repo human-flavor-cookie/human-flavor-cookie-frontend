@@ -1,87 +1,186 @@
-<?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/main_background"
+    android:orientation="vertical">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <!-- 나머지 콘텐츠 -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-        <!-- Step Area -->
+        <!-- 기존의 모든 내용 유지 -->
+        <!-- 위쪽 이름, 재화, 걸음수, progress bar 등 -->
         <LinearLayout
-            android:id="@+id/ll_step_area"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="200dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
-            <TextView
-                android:id="@+id/tv_step_count"
-                android:text="0"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-            <TextView
-                android:id="@+id/tv_step_count_text"
-                android:text="걸음 걸었어요!"
-                android:layout_marginLeft="10dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-        </LinearLayout>
-
-        <!--Active Calorie -->
-        <LinearLayout
-            android:id="@+id/ll_active_calories_area"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ll_step_area"
             android:orientation="horizontal">
+            <!-- 이름 -->
             <TextView
-                android:id="@+id/tv_active_calories_count"
-                android:text="0"
+                android:id="@+id/main_name"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/cookierun_regular"
+                android:layout_marginTop="23dp"
+                android:layout_marginLeft="25dp"
+                android:gravity="left|center_horizontal"
+                android:textColor="@color/font_color"
+                android:textSize="20dp"
+                android:text="용쿠사기 님" />
 
-            <TextView
-                android:id="@+id/tv_active_calories_text"
-                android:text="total 칼로리"
-                android:layout_marginLeft="10dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+            <!-- 재화 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="end|center_horizontal"
+                android:layout_marginRight="25dp"
+                android:layout_marginTop="20dp"
+                android:orientation="vertical">
+
+                <!-- coin -->
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="2310"
+                        android:fontFamily="@font/cookierun_bold"
+                        android:textColor="#FFFFFF"
+                        android:gravity="end|center_vertical"
+                        android:paddingRight="15dp"
+                        android:background="@drawable/coin_background" />
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="20dp"
+                        android:src="@drawable/silver_coin" />
+                </FrameLayout>
+
+                <!-- diamond -->
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="999"
+                        android:fontFamily="@font/cookierun_bold"
+                        android:textColor="#FFFFFF"
+                        android:gravity="end|center_vertical"
+                        android:paddingRight="15dp"
+                        android:background="@drawable/coin_background" />
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/diamond" />
+                </FrameLayout>
+            </LinearLayout>
         </LinearLayout>
 
-        <!-- Total Calorie -->
-        <LinearLayout
-            android:id="@+id/ll_total_calories_area"
+        <!-- 걸음수 및 Progress Bar -->
+        <TextView
+            android:id="@+id/main_step"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ll_active_calories_area"
-            android:orientation="horizontal">
-            <TextView
-                android:id="@+id/tv_total_calories_count"
-                android:text="0"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:fontFamily="@font/cookierun_bold"
+            android:textColor="@color/font_color"
+            android:layout_marginTop="55dp"
+            android:textSize="25dp"
+            android:text="오늘 총 걸음수 : \n8213" />
 
-            <TextView
-                android:id="@+id/tv_total_calories_text"
-                android:text="거리"
-                android:layout_marginLeft="10dp"
+        <LinearLayout
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:orientation="vertical">
+            <ImageView
+                android:id="@+id/main_cookie"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:src="@drawable/running_cookie"
+                android:paddingLeft="60dp" />
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:layout_width="315dp"
+                    android:layout_height="30dp"
+                    android:scaleType="fitXY"
+                    android:layout_marginBottom="10dp"
+                    android:elevation="2dp"
+                    android:background="@drawable/progress_white" />
+                <ImageView
+                    android:id="@+id/main_progress"
+                    android:layout_width="134dp"
+                    android:layout_height="30dp"
+                    android:scaleType="fitXY"
+                    android:layout_marginBottom="10dp"
+                    android:elevation="2dp"
+                    android:src="@drawable/progress_orange" />
+            </FrameLayout>
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/main_percent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:fontFamily="@font/cookierun_bold"
+            android:textColor="@color/font_color"
+            android:layout_marginTop="20dp"
+            android:textSize="25dp"
+            android:text="70%" />
+        <TextView
+            android:id="@+id/main_goal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:fontFamily="@font/cookierun_bold"
+            android:textColor="@color/font_color"
+            android:textSize="18dp"
+            android:text="오늘의 목표: 15km" />
 
+        <ImageView
+            android:layout_marginTop="50dp"
+            android:layout_width="370dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center"
+            android:textSize="25dp"
+            android:src="@drawable/run_button" />
+    </LinearLayout>
 
+    <!-- 맨 아래 고정될 LinearLayout -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:fontFamily="@font/cookierun_bold"
+            android:textColor="#000000"
+            android:textSize="12dp"
+            android:text="어서 가... 난 이제 틀렸어..." />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/die_cookie" />
+    </LinearLayout>
+</LinearLayout>
