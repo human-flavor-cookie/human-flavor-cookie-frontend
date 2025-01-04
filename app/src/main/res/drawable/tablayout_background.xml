@@ -1,0 +1,4 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/tab_gray" />
+    <corners android:radius="13dp"/> <!-- 모서리 둥글게 -->
+</shape>

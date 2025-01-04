@@ -4,4 +4,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="font_color">#501901</color>
     <color name="background_color">#F5EEE7</color>
+    <color name="ranking_gray">#FCFCFCFC</color>
+    <color name="tab_gray">#C9C9C9</color>
+    <color name="cookie_brown">#D38534</color>
 </resources>

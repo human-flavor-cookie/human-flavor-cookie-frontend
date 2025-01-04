@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.example.fitness.databinding.ActivityMainBinding
 import com.example.fitness.ui.main.MainFragment
+import com.example.fitness.ui.ranking.RankingFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -48,7 +49,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_mypage -> {
-                    //openFragment(MypageFragment(), HwConstants.MYPAGE)
+                    openFragment(RankingFragment(), Constants.MYPAGE)
                     true
                 }
                 else -> false
