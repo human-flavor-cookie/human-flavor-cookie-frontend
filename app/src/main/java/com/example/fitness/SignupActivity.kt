@@ -34,17 +34,20 @@ class SignupActivity : AppCompatActivity() {
             val name = binding.signupName.text.toString()
             val email = binding.signupEmail.text.toString()
             val password = binding.signupPw.text.toString()
-
-            if (name.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty()) {
-                signupUser(SignupRequest(name, email, password))
-            } else {
-                Toast.makeText(this, "모든 필드를 입력해주세요.", Toast.LENGTH_SHORT).show()
+            val pwConfirm = binding.signupPwConfirm.text.toString()
+            //비밀번호 확인
+            if (password != pwConfirm) Toast.makeText(this, "비밀번호 확인이 일치하지 않습니다.", Toast.LENGTH_SHORT).show()
+            else{
+                if (name.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty()) {
+                    signupUser(SignupRequest(name, email, password))
+                } else {
+                    Toast.makeText(this, "모든 필드를 입력해주세요.", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
 
     private fun signupUser(request: SignupRequest) {
-        Log.d("RequestBody", Gson().toJson(request))
         lifecycleScope.launch {
             try {
                 val response = RetrofitClient.instance.signup(request)
