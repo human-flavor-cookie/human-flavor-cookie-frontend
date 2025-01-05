@@ -14,6 +14,7 @@ class All_Fragment : Fragment(R.layout.fragment_all) {
 
         // RecyclerView 설정
         val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
+        val layoutManager = LinearLayoutManager(context) // 수직 스크롤
         recyclerView.layoutManager = LinearLayoutManager(context) // 수직 스크롤
 
         // 데이터 설정
@@ -21,13 +22,16 @@ class All_Fragment : Fragment(R.layout.fragment_all) {
             RankingItem(1, "나에요", "15.34km", 18, "일째", "달리는 중🔥", R.drawable.zombie_cookie),
             RankingItem(2, "용쿠사기", "13.67km", 2, "일째", "달리는 중🔥", R.drawable.brave_cookie),
             RankingItem(3, "10km미만잡", "10.09km", 146, "일째", "달리는 중🔥", R.drawable.myeongrang_cookie),
-            RankingItem(2, "용쿠사기", "13.67km", 2, "일째", "달리는 중🔥", R.drawable.brave_cookie),
-            RankingItem(3, "10km미만잡", "10.09km", 146, "일째", "달리는 중🔥", R.drawable.myeongrang_cookie)
+            RankingItem(4, "용쿠사기", "13.67km", 2, "일째", "달리는 중🔥", R.drawable.brave_cookie),
+            RankingItem(5, "10km미만잡", "10.09km", 146, "일째", "달리는 중🔥", R.drawable.myeongrang_cookie)
         )
 
         // 어댑터 설정
         val adapter = RankingAdapter(rankingList)
         recyclerView.adapter = adapter
+
+        // Sticky Header 적용
+        //recyclerView.addItemDecoration(StickyHeaderDecoration(recyclerView))
     }
 
 //    // 데이터 목록 (예시로 간단한 텍스트 리스트)

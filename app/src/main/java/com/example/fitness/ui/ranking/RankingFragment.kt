@@ -50,6 +50,15 @@ class RankingFragment : Fragment(R.layout.fragment_ranking) {
             // 더 많은 데이터 추가 가능
         )
 
+        // 데이터 설정
+        val rankingList_me = listOf(
+            RankingItem(123, "주찬", "15.34km", 18, "일째", "달리는 중🔥", R.drawable.myeongrang_cookie),
+            RankingItem(4, "주찬", "15.34km", 18, "일째", "달리는 중🔥", R.drawable.myeongrang_cookie),
+            RankingItem(1, "주찬", "15.34km", 18, "일째", "달리는 중🔥", R.drawable.myeongrang_cookie)
+            // 더 많은 데이터 추가 가능
+        )
+
+
         val tabLayout = view.findViewById<TabLayout>(R.id.tabLayout)
         val viewPager = view.findViewById<ViewPager2>(R.id.viewPager)
 
@@ -62,7 +71,6 @@ class RankingFragment : Fragment(R.layout.fragment_ranking) {
             // Inflate 커스텀 뷰
             val customView = LayoutInflater.from(tabLayout.context)
                 .inflate(R.layout.custom_tab, null)
-
             val tabText = customView.findViewById<TextView>(R.id.tab_text)
             tabText.text = when (position) {
                 0 -> "전체"  // 첫 번째 탭
@@ -73,6 +81,16 @@ class RankingFragment : Fragment(R.layout.fragment_ranking) {
             // 탭에 커스텀 뷰 적용
             tab.customView = customView
         }.attach()
+
+        // "전체" 탭에 해당하는 초기 데이터 설정
+        val firstItem = rankingList_me[0] // 첫 번째 데이터 사용
+
+        // FrameLayout 내 요소들 초기값 설정
+        binding.rank.text = firstItem.rank.toString()
+        binding.rankImage.setImageResource(firstItem.imageResource)
+        binding.rankerName.text = firstItem.name
+        binding.rankerDistance.text = firstItem.distance
+        binding.rankerSuccess.text = firstItem.success.toString()
 
         // TabLayout 선택 이벤트
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -88,6 +106,12 @@ class RankingFragment : Fragment(R.layout.fragment_ranking) {
                     val thirdItem = rankingList_all[2]
                     binding.third.setImageResource(thirdItem.imageResource)
                     binding.thirdName.text = thirdItem.name
+                    val user = rankingList_me[0]
+                    binding.rankerName.text = user.name
+                    binding.rankImage.setImageResource(user.imageResource)
+                    binding.rank.text = user.rank.toString()
+                    binding.rankerDistance.text = user.distance
+                    binding.rankerSuccess.text = user.success.toString()
                 }
                 else if (tab?.position == 1) {
                     val firstItem = rankingList_friend[0] // 첫 번째 데이터를 사용
@@ -99,6 +123,12 @@ class RankingFragment : Fragment(R.layout.fragment_ranking) {
                     val thirdItem = rankingList_friend[2]
                     binding.third.setImageResource(thirdItem.imageResource)
                     binding.thirdName.text = thirdItem.name
+                    val user = rankingList_me[1]
+                    binding.rankerName.text = user.name
+                    binding.rankImage.setImageResource(user.imageResource)
+                    binding.rank.text = user.rank.toString()
+                    binding.rankerDistance.text = user.distance
+                    binding.rankerSuccess.text = user.success.toString()
                 }
                 else {
                     val firstItem = rankingList_tier[0] // 첫 번째 데이터를 사용
@@ -110,6 +140,12 @@ class RankingFragment : Fragment(R.layout.fragment_ranking) {
                     val thirdItem = rankingList_tier[2]
                     binding.third.setImageResource(thirdItem.imageResource)
                     binding.thirdName.text = thirdItem.name
+                    val user = rankingList_me[2]
+                    binding.rankerName.text = user.name
+                    binding.rankImage.setImageResource(user.imageResource)
+                    binding.rank.text = user.rank.toString()
+                    binding.rankerDistance.text = user.distance
+                    binding.rankerSuccess.text = user.success.toString()
                 }
 
             }

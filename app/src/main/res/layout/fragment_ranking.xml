@@ -63,22 +63,13 @@
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
         android:layout_width="317dp"
-        android:layout_height="259dp"
+        android:layout_height="197dp"
+        android:layout_marginTop="62dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tabLayout">
 
     </androidx.viewpager2.widget.ViewPager2>
-
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="318dp"
-        android:layout_height="279dp"
-        android:layout_marginTop="-10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tabLayout"
-        app:srcCompat="@drawable/ranking_frame2" />
 
     <TextView
         android:id="@+id/first_name"
@@ -117,4 +108,124 @@
         app:layout_constraintHorizontal_bias="0.739"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/third" />
+
+    <!-- FrameLayout으로 다른 요소들을 겹치게 배치 -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="62dp"
+        android:layout_gravity="center_horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/viewPager">
+
+        <!-- ConstraintLayout을 FrameLayout에 넣기 -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="318dp"
+            android:layout_height="62dp"
+            android:layout_gravity="center_horizontal"
+            android:background="#FFF4AA">
+
+            <TextView
+                android:id="@+id/rank"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="15dp"
+                android:fontFamily="@font/cookierun_regular"
+                android:gravity="center"
+                android:shadowColor="@color/black"
+                android:shadowDx="-1"
+                android:shadowDy="1"
+                android:shadowRadius="1"
+                android:text="1000"
+                android:textColor="#322C2C"
+                android:textSize="24sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/rank_image"
+                android:layout_width="53dp"
+                android:layout_height="46dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="190dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/zombie_cookie" />
+
+            <TextView
+                android:id="@+id/ranker_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/cookierun_bold"
+                android:text="나에요"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                app:layout_constraintStart_toEndOf="@+id/rank_image"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/ranker_distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="4dp"
+                android:fontFamily="@font/cookierun_regular"
+                android:text="15.34km"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                app:layout_constraintStart_toEndOf="@+id/rank_image"
+                app:layout_constraintTop_toBottomOf="@+id/ranker_name" />
+
+            <TextView
+                android:id="@+id/ranker_success"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:fontFamily="@font/cookierun_regular"
+                android:gravity="end"
+                android:text="18"
+                android:textColor="@color/black"
+                android:textSize="13sp"
+                app:layout_constraintEnd_toStartOf="@+id/ranking_days"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/ranking_days"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="32dp"
+                android:fontFamily="@font/cookierun_regular"
+                android:text="일째"
+                android:textColor="@color/black"
+                android:textSize="13sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/ranking_running"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="22dp"
+                android:fontFamily="@font/cookierun_regular"
+                android:text="달리는 중🔥"
+                android:textColor="@color/black"
+                android:textSize="13sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ranker_success" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="318dp"
+        android:layout_height="279dp"
+        android:layout_marginTop="-10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tabLayout"
+        app:srcCompat="@drawable/ranking_frame2" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

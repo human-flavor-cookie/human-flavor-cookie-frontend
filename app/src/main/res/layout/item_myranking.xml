@@ -11,17 +11,16 @@
         android:id="@+id/rank"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:text="1"
+        android:textColor="#322C2C"
+        android:textSize="28sp"
         android:fontFamily="@font/cookierun_regular"
-        android:gravity="center"
-        android:shadowColor="@color/black"
         android:shadowDx="-1"
         android:shadowDy="1"
         android:shadowRadius="1"
-        android:text="1000"
-        android:textColor="#322C2C"
-        android:textSize="24sp"
+        android:shadowColor="@color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -29,9 +28,9 @@
         android:id="@+id/rank_image"
         android:layout_width="53dp"
         android:layout_height="46dp"
+        android:layout_marginStart="17dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="190dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/rank"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/zombie_cookie" />
 
@@ -41,10 +40,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
         android:layout_marginTop="8dp"
-        android:fontFamily="@font/cookierun_bold"
         android:text="나에요"
-        android:textColor="@color/black"
         android:textSize="15sp"
+        android:textColor="@color/black"
+        android:fontFamily="@font/cookierun_bold"
         app:layout_constraintStart_toEndOf="@+id/rank_image"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -54,10 +53,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
         android:layout_marginTop="4dp"
-        android:fontFamily="@font/cookierun_regular"
         android:text="15.34km"
-        android:textColor="@color/black"
         android:textSize="15sp"
+        android:textColor="@color/black"
+        android:fontFamily="@font/cookierun_regular"
         app:layout_constraintStart_toEndOf="@+id/rank_image"
         app:layout_constraintTop_toBottomOf="@+id/ranker_name" />
 
