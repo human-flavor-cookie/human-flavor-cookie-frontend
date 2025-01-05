@@ -127,7 +127,6 @@
             android:textSize="15sp"
             android:lineSpacingExtra="1dp"
             android:fontFamily="@font/cookierun_regular"
-            android:paintFlags="underline"
             android:textColor="#DFA66B" />
 
     </LinearLayout>
