@@ -4,6 +4,8 @@ import com.example.fitness.dto.auth.LoginRequest
 import com.example.fitness.dto.auth.LoginResponse
 import com.example.fitness.dto.auth.MainPageResponse
 import com.example.fitness.dto.auth.SignupRequest
+import com.example.fitness.dto.running.RunningRequest
+import com.example.fitness.dto.running.RunningResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -20,4 +22,8 @@ interface ApiService {
 
     @GET("member/main-page")
     suspend fun loginMember(@Header("Authorization") token: String): Response<MainPageResponse>
+
+    //running
+    @POST("api/running/end")
+    suspend fun runningEnd(@Header("Authorization") token: String, @Body request: RunningRequest): Response<RunningResponse>
 }
