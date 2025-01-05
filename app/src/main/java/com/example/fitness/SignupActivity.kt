@@ -2,19 +2,13 @@ package com.example.fitness
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.fitness.api.RetrofitClient
 import com.example.fitness.databinding.ActivitySignupBinding
 import com.example.fitness.dto.auth.SignupRequest
-import com.google.android.gms.common.api.Response
-import com.google.gson.Gson
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class SignupActivity : AppCompatActivity() {
 

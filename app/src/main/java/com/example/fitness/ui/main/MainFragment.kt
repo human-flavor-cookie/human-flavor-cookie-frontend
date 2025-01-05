@@ -11,8 +11,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.PermissionController
 import androidx.health.connect.client.permission.HealthPermission
@@ -25,10 +25,11 @@ import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.records.TotalCaloriesBurnedRecord
 import androidx.health.connect.client.request.ReadRecordsRequest
 import androidx.health.connect.client.time.TimeRangeFilter
+import androidx.lifecycle.lifecycleScope
 import com.example.fitness.Constants
 import com.example.fitness.R
+import com.example.fitness.api.RetrofitClient
 import com.example.fitness.databinding.FragmentMainBinding
-import com.example.fitness.ui.cookie.CookieAdapter
 import com.example.fitness.util.CustomToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -144,6 +145,7 @@ class MainFragment : Fragment() {
         val distance = distanceResponse.records.sumOf { it.distance.inMeters }
 
         CoroutineScope(Dispatchers.Main).launch {
+            loginMember()
             binding.mainStep.text = "오늘 총 걸음수 : \n$steps"
             binding.mainGoal.text = String.format("%.3f km", distance / 1000)
             binding.mainPercent.text = String.format("%.1f%%", distance / 10 / 5)
@@ -178,5 +180,27 @@ class MainFragment : Fragment() {
     fun dpToPx(context: Context, dp: Int): Int {
         val density = context.resources.displayMetrics.density
         return (dp * density).toInt()
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun loginMember() {
+        lifecycleScope.launch {
+            try {
+                val token = requireContext().getSharedPreferences("auth_prefs", Context.MODE_PRIVATE).getString("jwt_token", null)
+                if(token != null){
+                    val response = RetrofitClient.instance.loginMember(token)
+
+                    // 응답이 성공적일 경우
+                    if (response.code() == 200) {
+                        val memberName = response.body()?.name
+                        val coin = response.body()?.coin
+                        binding.mainName.text = "$memberName 님"
+                        binding.mainCoin.text = coin.toString()
+                    }
+                }
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }

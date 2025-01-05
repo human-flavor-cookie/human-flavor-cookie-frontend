@@ -2,15 +2,12 @@ package com.example.fitness
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.fitness.api.RetrofitClient
 import com.example.fitness.databinding.ActivityLoginBinding
 import com.example.fitness.dto.auth.LoginRequest
-import com.example.fitness.dto.auth.SignupRequest
-import com.example.fitness.ui.main.MainFragment
 import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
