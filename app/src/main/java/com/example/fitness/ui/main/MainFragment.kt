@@ -204,9 +204,6 @@ class MainFragment : Fragment() {
                 if (response.code() == 200) {
                     val memberName = response.body()?.name
                     coin = response.body()?.coin
-                    if(coin != null){
-                        Log.d("coin 내부", coin.toString())
-                    }
                     binding.mainName.text = "$memberName 님"
                     binding.mainCoin.text = coin.toString()
                 }
@@ -214,7 +211,6 @@ class MainFragment : Fragment() {
         } catch (e: Exception) {
             Toast.makeText(requireContext(), "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
         }
-        Log.d("coin", coin.toString())
         return coin
     }
 }

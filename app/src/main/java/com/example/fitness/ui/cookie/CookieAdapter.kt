@@ -3,6 +3,7 @@ package com.example.fitness.ui.cookie
 import android.graphics.Color
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -46,9 +47,13 @@ class CookieAdapter(private val cookieList: MutableList<CookieItem>) :
         holder.distanceWithInt.text = cookie.distanceWithInt
         holder.cookieImage.setImageResource(cookie.imageRes)
 
+        Log.d(cookie.name, cookie.owned.toString())
+        Log.d(cookie.name, cookie.purchasable.toString())
+
 
         // isDisabled 조건에 따라 select_button 이미지 변경
-        if (cookie.isDisabled) {
+        //해금 됐지만.. 깨진경우..
+        if (cookie.purchasable) {
             holder.selectButton.setImageResource(R.drawable.cookie_money) // 비활성화 이미지
             if (cookie.name == "명랑한맛 쿠키") {
                 holder.cookieImage.setImageResource(R.drawable.happy_cookie_dead)
@@ -59,23 +64,27 @@ class CookieAdapter(private val cookieList: MutableList<CookieItem>) :
             } else if (cookie.name == "천사맛 쿠키") {
 
             }
-        } else if (cookie.isDisabled == false && cookie.distanceCumulated >= userDistance){
+        }
+        //해금 안된 경우
+        else if (!cookie.owned && !cookie.purchasable){
             holder.selectButton.setImageResource(R.drawable.cookie_lock) // 잠금
 //            applyGrayscale(holder)
-        } else if (cookie.isDisabled == false && cookie.distanceCumulated <= userDistance){
+        } 
+        //해금 됐고.. 쿠키 안부셨는데.. 선택 안한 경우
+        else if (cookie.owned && !cookie.isSelected){
             holder.selectButton.setImageResource(R.drawable.select_cookie) // 해금
         }
 
-        // 특정 조건에서 흑백 처리
-        if (cookie.isDisabled || cookie.distanceCumulated >= userDistance) { // 조건: isDisabled가 true인 경우
+        // 특정 조건에서 흑백 처리 - 해금 안된 경우 + 깨진 경우
+        if ((!cookie.owned && !cookie.purchasable) || cookie.purchasable) { // 조건: isDisabled가 true인 경우
             applyGrayscale(holder)
         } else {
             clearGrayscale(holder)
         }
 
-        // selectButton 클릭 리스너
+        // selectButton 클릭 리스너 -
         holder.selectButton.setOnClickListener {
-            if (!cookie.isDisabled && cookie.distanceCumulated <= userDistance) {
+            if (cookie.owned && !cookie.purchasable && !cookie.isSelected) {
                 // 모든 쿠키 항목의 isSelected 값을 false로 설정
                 cookieList.forEachIndexed { index, cookieItem ->
                     // 각 항목의 isSelected를 false로 설정

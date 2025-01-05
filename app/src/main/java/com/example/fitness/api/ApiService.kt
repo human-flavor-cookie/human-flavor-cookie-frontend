@@ -4,6 +4,7 @@ import com.example.fitness.dto.auth.LoginRequest
 import com.example.fitness.dto.auth.LoginResponse
 import com.example.fitness.dto.auth.MainPageResponse
 import com.example.fitness.dto.auth.SignupRequest
+import com.example.fitness.dto.cookie.CookieListResponse
 import com.example.fitness.dto.running.RunningRequest
 import com.example.fitness.dto.running.RunningResponse
 import retrofit2.Response
@@ -26,4 +27,8 @@ interface ApiService {
     //running
     @POST("api/running/end")
     suspend fun runningEnd(@Header("Authorization") token: String, @Body request: RunningRequest): Response<RunningResponse>
+
+    //cookie
+    @GET("api/cookie/list")
+    suspend fun cookieList(@Header("Authorization") token: String): Response<List<CookieListResponse>>
 }
