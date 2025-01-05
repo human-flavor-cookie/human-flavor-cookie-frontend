@@ -35,6 +35,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 import java.time.LocalTime
 
@@ -145,7 +146,7 @@ class MainFragment : Fragment() {
         val distance = distanceResponse.records.sumOf { it.distance.inMeters }
 
         CoroutineScope(Dispatchers.Main).launch {
-            loginMember()
+            var coin = loginMember()
             binding.mainStep.text = "오늘 총 걸음수 : \n$steps"
             binding.mainGoal.text = String.format("%.3f km", distance / 1000)
             binding.mainPercent.text = String.format("%.1f%%", distance / 10 / 5)
@@ -159,12 +160,19 @@ class MainFragment : Fragment() {
             progressLayoutParams.width = dpToPx(requireContext(), (distance / 1000 / 5 * 315).toInt())
             binding.mainProgress.layoutParams = progressLayoutParams
 
-            //정지 버튼 클릭
+            //시작 버튼 클릭
             binding.mainStart.setOnClickListener {
-                val transaction = parentFragmentManager.beginTransaction()
-                transaction.replace(R.id.nav_host_fragment, RunningFragment())
-                transaction.addToBackStack(null)
-                transaction.commit()
+                if(coin != null){
+                    val fragment = RunningFragment()
+                    val bundle = Bundle()
+                    bundle.putInt("coin", coin)
+                    fragment.arguments = bundle
+
+                    val transaction = parentFragmentManager.beginTransaction()
+                    transaction.replace(R.id.nav_host_fragment, fragment)
+                    transaction.addToBackStack(null)
+                    transaction.commit()
+                }
             }
         }
     }
@@ -183,24 +191,26 @@ class MainFragment : Fragment() {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun loginMember() {
-        lifecycleScope.launch {
-            try {
-                val token = requireContext().getSharedPreferences("auth_prefs", Context.MODE_PRIVATE).getString("jwt_token", null)
-                if(token != null){
-                    val response = RetrofitClient.instance.loginMember(token)
+    private suspend fun loginMember(): Int? {
+        var coin: Int? = null
 
-                    // 응답이 성공적일 경우
-                    if (response.code() == 200) {
-                        val memberName = response.body()?.name
-                        val coin = response.body()?.coin
-                        binding.mainName.text = "$memberName 님"
-                        binding.mainCoin.text = coin.toString()
-                    }
+        try {
+            val token = requireContext().getSharedPreferences("auth_prefs", Context.MODE_PRIVATE).getString("jwt_token", null)
+            if (token != null) {
+                val response = withContext(Dispatchers.IO) {
+                    RetrofitClient.instance.loginMember(token)
                 }
-            } catch (e: Exception) {
-                Toast.makeText(requireContext(), "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
+
+                if (response.code() == 200) {
+                    val memberName = response.body()?.name
+                    coin = response.body()?.coin
+                    binding.mainName.text = "$memberName 님"
+                    binding.mainCoin.text = coin.toString()
+                }
             }
+        } catch (e: Exception) {
+            Toast.makeText(requireContext(), "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
         }
+        return coin
     }
 }

@@ -74,6 +74,8 @@ class RunningFragment : Fragment() {
             stopButton.setOnClickListener {
                 showCustomDialog()
             }
+            val coin = arguments?.getInt("coin")
+            view.findViewById<TextView>(R.id.running_coin).text = coin.toString()
 
             /**
              * 애니메이션
