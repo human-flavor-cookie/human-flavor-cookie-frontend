@@ -23,14 +23,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // 로그인 상태 확인
-        if (!isUserLoggedIn()) {
-            // 로그인되지 않은 경우 LoginActivity로 이동
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-            finish() // MainActivity 종료
-            return
-        }
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivity(intent)
+        finish()
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)

@@ -17,14 +17,19 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.login.setOnClickListener{
-            // 로그인 상태 저장(임시)
-            val sharedPref = getSharedPreferences("user_pref", MODE_PRIVATE)
-            with(sharedPref.edit()) {
-                putBoolean("isLoggedIn", true)
-                apply()
-            }
+//            // 로그인 상태 저장(임시)
+//            val sharedPref = getSharedPreferences("user_pref", MODE_PRIVATE)
+//            with(sharedPref.edit()) {
+//                putBoolean("isLoggedIn", true)
+//                apply()
+//            }
 
             val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+        }
+
+        binding.loginSignup.setOnClickListener {
+            val intent = Intent(this, SignupActivity::class.java)
             startActivity(intent)
         }
     }
