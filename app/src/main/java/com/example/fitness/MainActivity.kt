@@ -1,7 +1,9 @@
 package com.example.fitness
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -23,9 +25,14 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val intent = Intent(this, LoginActivity::class.java)
-        startActivity(intent)
-        finish()
+        // 로그인 상태 체크
+        if (!isLoggedIn()) {
+            Log.d("d", "로그인 안됨")
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+            finish()
+            return
+        }
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -75,9 +82,9 @@ class MainActivity : AppCompatActivity() {
         transaction.commit()
     }
 
-    private fun isUserLoggedIn(): Boolean {
-        //로그인 기능 구현
-        val sharedPref = getSharedPreferences("user_pref", MODE_PRIVATE)
-        return sharedPref.getBoolean("isLoggedIn", false)
+    private fun isLoggedIn(): Boolean {
+        // SharedPreferences에서 로그인 상태를 확인
+        val prefs = getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+        return prefs.getString("jwt_token", null) != null
     }
 }

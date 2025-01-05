@@ -5,7 +5,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
-    private const val BASE_URL = "http://143.248.161.50:8080/"
+    private const val BASE_URL = "http://143.248.161.50:8080/"  //내 ip주소
 
     var gson= GsonBuilder().setLenient().create()
 
