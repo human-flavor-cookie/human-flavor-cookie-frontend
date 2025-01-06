@@ -29,9 +29,11 @@ class SignupActivity : AppCompatActivity() {
             val email = binding.signupEmail.text.toString()
             val password = binding.signupPw.text.toString()
             val pwConfirm = binding.signupPwConfirm.text.toString()
+
             //비밀번호 확인
-            if (password != pwConfirm) Toast.makeText(this, "비밀번호 확인이 일치하지 않습니다.", Toast.LENGTH_SHORT).show()
-            else{
+            if (password != pwConfirm) {
+                Toast.makeText(this, "비밀번호 확인이 일치하지 않습니다.", Toast.LENGTH_SHORT).show()
+            } else{
                 if (name.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty()) {
                     signupUser(SignupRequest(name, email, password))
                 } else {
@@ -47,8 +49,6 @@ class SignupActivity : AppCompatActivity() {
                 val response = RetrofitClient.instance.signup(request)
                 if (response.code() == 200) {
                     Toast.makeText(this@SignupActivity, "회원가입 성공", Toast.LENGTH_SHORT).show()
-                    startActivity(Intent(this@SignupActivity, LoginActivity::class.java))
-                    finish()
                 } else {
                     val errorMessage = response.errorBody()?.string() ?: "회원가입 실패"
                     Toast.makeText(this@SignupActivity, errorMessage, Toast.LENGTH_SHORT).show()
