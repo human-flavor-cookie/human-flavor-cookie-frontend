@@ -1,13 +1,22 @@
 package com.example.fitness.ui.ranking
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fitness.R
+import com.example.fitness.api.RetrofitClient
+import com.example.fitness.dto.ranking.AllRankingResponse
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class All_Fragment : Fragment(R.layout.fragment_all) {
+    private var rankingList: AllRankingResponse? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -17,26 +26,50 @@ class All_Fragment : Fragment(R.layout.fragment_all) {
         val layoutManager = LinearLayoutManager(context) // 수직 스크롤
         recyclerView.layoutManager = LinearLayoutManager(context) // 수직 스크롤
 
-        // 데이터 설정
-        val rankingList = listOf(
-            RankingItem(1, "나에요", "15.34km", 18, "일째", "달리는 중🔥", R.drawable.zombie_cookie),
-            RankingItem(2, "용쿠사기", "13.67km", 2, "일째", "달리는 중🔥", R.drawable.brave_cookie),
-            RankingItem(3, "10km미만잡", "10.09km", 146, "일째", "달리는 중🔥", R.drawable.myeongrang_cookie),
-            RankingItem(4, "용쿠사기", "13.67km", 2, "일째", "달리는 중🔥", R.drawable.brave_cookie),
-            RankingItem(5, "10km미만잡", "10.09km", 146, "일째", "달리는 중🔥", R.drawable.myeongrang_cookie)
-        )
-
-        // 어댑터 설정
-        val adapter = RankingAdapter(rankingList)
-        recyclerView.adapter = adapter
-
-        // Sticky Header 적용
-        //recyclerView.addItemDecoration(StickyHeaderDecoration(recyclerView))
+        lifecycleScope.launch{
+            rankingList = ranking()
+            // 데이터 설정
+            val rankingList = rankingList?.allRanks?.map { rank ->
+            RankingItem(
+                rank.rank,
+                rank.userName,
+                "${String.format("%.2f", rank.totalDistance)}km",
+                rank.consecutiveDays,
+                "일째", "달리는 중🔥",
+                cookiePick(rank.currentCookieId)
+                )
+            } ?: listOf()
+            // 어댑터 설정
+            val adapter = RankingAdapter(rankingList)
+            recyclerView.adapter = adapter
+        }
     }
 
-//    // 데이터 목록 (예시로 간단한 텍스트 리스트)
-//    private fun getData(): List<String> {
-//        return listOf("Tab 2 - Item 1", "Tab 2 - Item 2", "Tab 2 - Item 3")
-//    }
+    private suspend fun ranking(): AllRankingResponse? {
+        return try {
+            val token = requireContext()
+                .getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+                .getString("jwt_token", null)
+            token?.let {
+                val response = withContext(Dispatchers.IO) {
+                    RetrofitClient.instance.ranking(it)
+                }
+                if (response.code() == 200) response.body() else null
+            }
+        } catch (e: Exception) {
+            Toast.makeText(requireContext(), "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
+            null
+        }
+    }
 
+    private fun cookiePick(cookieId: Long): Int {
+        return when (cookieId.toInt()) {
+            1 -> R.drawable.brave_stand
+            2 -> R.drawable.zombie_stand
+            3 -> R.drawable.happy_stand
+            4 -> R.drawable.angel_stand
+            5 -> R.drawable.buttecookie_stand
+            else -> -1
+        }
+    }
 }

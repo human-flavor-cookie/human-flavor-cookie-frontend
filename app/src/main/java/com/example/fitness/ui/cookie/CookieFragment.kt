@@ -59,7 +59,7 @@ class CookieFragment : Fragment() {
             val cookieList = mutableListOf(
                 CookieItem(
                     name = "용감한맛 쿠키",
-                    properties = "ㅋ",
+                    properties = "용감함",
                     distanceWith = "함께 뛴 거리",
                     distanceWithInt = String.format("%.3fkm", cookie[0].accumulatedDistance),
                     imageRes = R.drawable.brave_stand,
@@ -92,10 +92,10 @@ class CookieFragment : Fragment() {
                 ),
                 CookieItem(
                     name = "천사맛 쿠키",
-                    properties = "보상 1.2배",
+                    properties = "부활",
                     distanceWith = "함께 뛴 거리",
                     distanceWithInt = String.format("%.3fkm", cookie[3].accumulatedDistance),
-                    imageRes = R.drawable.happy_die,
+                    imageRes = R.drawable.angel_stand,
                     owned = cookie[3].owned,
                     //distanceCumulated = 15f,
                     purchasable = cookie[3].purchasable,
@@ -107,12 +107,11 @@ class CookieFragment : Fragment() {
                     distanceWith = "함께 뛴 거리",
                     distanceWithInt = String.format("%.3fkm", cookie[4].accumulatedDistance),
                     imageRes = R.drawable.buttecookie_stand,
-                    owned = cookie[3].owned,
+                    owned = cookie[4].owned,
                     //distanceCumulated = 15f,
-                    purchasable = cookie[3].purchasable,
+                    purchasable = cookie[4].purchasable,
                     isSelected = false
                 )
-                //TODO: 버터맛 쿠키 추가 필요
             )
 
             // 어댑터 설정
