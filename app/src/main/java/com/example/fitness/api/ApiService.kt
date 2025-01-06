@@ -4,6 +4,7 @@ import com.example.fitness.dto.auth.LoginRequest
 import com.example.fitness.dto.auth.LoginResponse
 import com.example.fitness.dto.auth.MainPageResponse
 import com.example.fitness.dto.auth.SignupRequest
+import com.example.fitness.dto.cookie.CookieChangeRequestDto
 import com.example.fitness.dto.cookie.CookieListResponse
 import com.example.fitness.dto.running.RunningRequest
 import com.example.fitness.dto.running.RunningResponse
@@ -11,6 +12,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 
 interface ApiService {
@@ -31,4 +33,10 @@ interface ApiService {
     //cookie
     @GET("api/cookie/list")
     suspend fun cookieList(@Header("Authorization") token: String): Response<List<CookieListResponse>>
+
+    @PATCH("api/cookie/change")
+    suspend fun cookieChange(@Header("Authorization") token: String, @Body request: CookieChangeRequestDto): Response<Map<String, String>>
+
+    @POST("api/cookie/purchase")
+    suspend fun cookiePurchase(@Header("Authorization") token: String, @Body request: CookieChangeRequestDto): Response<Map<String, String>>
 }

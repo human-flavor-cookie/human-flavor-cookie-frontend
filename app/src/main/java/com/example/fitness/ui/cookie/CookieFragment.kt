@@ -89,7 +89,7 @@ class CookieFragment : Fragment() {
             )
 
             // 어댑터 설정
-            cookieAdapter = CookieAdapter(cookieList)
+            cookieAdapter = CookieAdapter(requireContext(), cookieList)
             recyclerView.adapter = cookieAdapter
         }
 

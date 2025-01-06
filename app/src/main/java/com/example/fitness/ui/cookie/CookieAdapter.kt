@@ -1,5 +1,6 @@
 package com.example.fitness.ui.cookie
 
+import android.content.Context
 import android.graphics.Color
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
@@ -9,12 +10,24 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fitness.R
+import com.example.fitness.api.RetrofitClient
+import com.example.fitness.dto.cookie.CookieChangeRequestDto
+import com.example.fitness.dto.running.RunningRequest
 import com.example.fitness.ui.ranking.RankingAdapter
 import com.example.fitness.ui.ranking.RankingItem
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class CookieAdapter(private val cookieList: MutableList<CookieItem>) :
+class CookieAdapter(
+    private val context: Context,
+    private val cookieList: MutableList<CookieItem>) :
     RecyclerView.Adapter<CookieAdapter.CookieViewHolder>() {
 
     // user 누적 거리
@@ -47,10 +60,6 @@ class CookieAdapter(private val cookieList: MutableList<CookieItem>) :
         holder.distanceWithInt.text = cookie.distanceWithInt
         holder.cookieImage.setImageResource(cookie.imageRes)
 
-        Log.d(cookie.name, cookie.owned.toString())
-        Log.d(cookie.name, cookie.purchasable.toString())
-
-
         // isDisabled 조건에 따라 select_button 이미지 변경
         //해금 됐지만.. 깨진경우..
         if (cookie.purchasable) {
@@ -82,9 +91,9 @@ class CookieAdapter(private val cookieList: MutableList<CookieItem>) :
             clearGrayscale(holder)
         }
 
-        // selectButton 클릭 리스너 -
+        // selectButton 클릭 리스너 - 해금됐고 쿠키 안부셔졌는데 선택 안한 경우
         holder.selectButton.setOnClickListener {
-            if (cookie.owned && !cookie.purchasable && !cookie.isSelected) {
+            if (cookie.owned && !cookie.isSelected) {
                 // 모든 쿠키 항목의 isSelected 값을 false로 설정
                 cookieList.forEachIndexed { index, cookieItem ->
                     // 각 항목의 isSelected를 false로 설정
@@ -93,6 +102,11 @@ class CookieAdapter(private val cookieList: MutableList<CookieItem>) :
                 cookieList[position] = cookie.copy(isSelected = true)
                 // 어댑터 갱신
                 notifyDataSetChanged()
+
+                cookieChange(CookieChangeRequestDto((position + 1).toLong()))
+            }
+
+            if(cookie.purchasable){
 
             }
         }
@@ -134,5 +148,25 @@ class CookieAdapter(private val cookieList: MutableList<CookieItem>) :
 
         // 전체 배경 투명도 복원 (선택적)
         holder.itemLayout.alpha = 1.0f
+    }
+
+    private fun cookieChange(request: CookieChangeRequestDto) {
+        Log.d("d", "cookie 선택")
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                val token = context.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+                    .getString("jwt_token", null)
+                if (token != null) {
+                    val response = withContext(Dispatchers.IO) {
+                        RetrofitClient.instance.cookieChange(token, request)
+                    }
+                    if (response.code() == 200) {
+                        Log.d("cookieChange", "쿠키 변경 성공")
+                    }
+                }
+            } catch (e: Exception) {
+                Toast.makeText(context, "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }
