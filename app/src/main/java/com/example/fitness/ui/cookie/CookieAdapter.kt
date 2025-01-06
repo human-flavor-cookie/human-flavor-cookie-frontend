@@ -1,19 +1,38 @@
 package com.example.fitness.ui.cookie
 
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fitness.R
+import com.example.fitness.api.RetrofitClient
+import com.example.fitness.dto.cookie.CookieChangeRequestDto
+import com.example.fitness.dto.cookie.CookieListResponse
+import com.example.fitness.dto.running.RunningRequest
 import com.example.fitness.ui.ranking.RankingAdapter
 import com.example.fitness.ui.ranking.RankingItem
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class CookieAdapter(private val cookieList: MutableList<CookieItem>) :
+class CookieAdapter(
+    private val context: Context,
+    private val cookieList: MutableList<CookieItem>) :
     RecyclerView.Adapter<CookieAdapter.CookieViewHolder>() {
 
     // user 누적 거리
@@ -46,9 +65,9 @@ class CookieAdapter(private val cookieList: MutableList<CookieItem>) :
         holder.distanceWithInt.text = cookie.distanceWithInt
         holder.cookieImage.setImageResource(cookie.imageRes)
 
-
         // isDisabled 조건에 따라 select_button 이미지 변경
-        if (cookie.isDisabled) {
+        // 깨진경우..해금 됐지만..
+        if (cookie.purchasable) {
             holder.selectButton.setImageResource(R.drawable.cookie_money) // 비활성화 이미지
             if (cookie.name == "명랑한맛 쿠키") {
                 holder.cookieImage.setImageResource(R.drawable.happy_cookie_dead)
@@ -59,32 +78,51 @@ class CookieAdapter(private val cookieList: MutableList<CookieItem>) :
             } else if (cookie.name == "천사맛 쿠키") {
 
             }
-        } else if (cookie.isDisabled == false && cookie.distanceCumulated >= userDistance){
+        }
+        //해금 안된 경우
+        else if (!cookie.owned && !cookie.purchasable){
             holder.selectButton.setImageResource(R.drawable.cookie_lock) // 잠금
 //            applyGrayscale(holder)
-        } else if (cookie.isDisabled == false && cookie.distanceCumulated <= userDistance){
+        }
+        //해금 됐고.. 쿠키 안부셨는데.. 선택 안한 경우
+        else if (cookie.owned && !cookie.isSelected){
             holder.selectButton.setImageResource(R.drawable.select_cookie) // 해금
         }
 
-        // 특정 조건에서 흑백 처리
-        if (cookie.isDisabled || cookie.distanceCumulated >= userDistance) { // 조건: isDisabled가 true인 경우
+        // 특정 조건에서 흑백 처리 - 해금 안된 경우 + 깨진 경우
+        if ((!cookie.owned && !cookie.purchasable) || cookie.purchasable) { // 조건: isDisabled가 true인 경우
             applyGrayscale(holder)
         } else {
             clearGrayscale(holder)
         }
 
-        // selectButton 클릭 리스너
+        // selectButton 클릭 리스너 - 해금됐고 쿠키 안부셔졌는데 선택 안한 경우
         holder.selectButton.setOnClickListener {
-            if (!cookie.isDisabled && cookie.distanceCumulated <= userDistance) {
+            if (cookie.owned && !cookie.isSelected) {
                 // 모든 쿠키 항목의 isSelected 값을 false로 설정
                 cookieList.forEachIndexed { index, cookieItem ->
                     // 각 항목의 isSelected를 false로 설정
                     cookieList[index] = cookieItem.copy(isSelected = false)
                 }
                 cookieList[position] = cookie.copy(isSelected = true)
+                cookieChange(CookieChangeRequestDto((position + 1).toLong()))
                 // 어댑터 갱신
                 notifyDataSetChanged()
+            }
 
+            if (cookie.purchasable) {
+                cookiePurchase(
+                    CookieChangeRequestDto((position + 1).toLong()),
+                    onSuccess = {
+                        val fragmentManager = (context as AppCompatActivity).supportFragmentManager
+                        fragmentManager.beginTransaction()
+                            .replace(R.id.nav_host_fragment, CookieFragment()) // R.id.fragment_container는 프래그먼트를 담는 컨테이너 ID
+                            .commit()
+                    },
+                    onFailure = {
+                        Log.d("cookiePurchase", "쿠키 구매 실패")
+                    }
+                )
             }
         }
         if (cookie.isSelected) {
@@ -125,5 +163,50 @@ class CookieAdapter(private val cookieList: MutableList<CookieItem>) :
 
         // 전체 배경 투명도 복원 (선택적)
         holder.itemLayout.alpha = 1.0f
+    }
+
+    private fun cookieChange(request: CookieChangeRequestDto) {
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                val token = context.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+                    .getString("jwt_token", null)
+                if (token != null) {
+                    val response = withContext(Dispatchers.IO) {
+                        RetrofitClient.instance.cookieChange(token, request)
+                    }
+                    if (response.code() == 200) {
+                        Log.d("cookieChange", "쿠키 변경 성공")
+                    }
+                }
+            } catch (e: Exception) {
+                Toast.makeText(context, "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun cookiePurchase(request: CookieChangeRequestDto, onSuccess: () -> Unit, onFailure: () -> Unit) {
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                Log.d("cookiePurchase", "쿠키 구매 시작")
+                val token = context.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+                    .getString("jwt_token", null)
+                if (token != null) {
+                    val response = withContext(Dispatchers.IO) {
+                        RetrofitClient.instance.cookiePurchase(token, request)
+                    }
+                    Log.d("cookiePurchase", "쿠키 토큰 성공")
+                    if (response.code() == 200) {
+                        Log.d("cookiePurchase", "쿠키 구매 성공")
+                        onSuccess()
+                    } else if (response.code() == 400) {
+                        Toast.makeText(context, "쿠키를 살 수 있는 돈이 부족합니다.", Toast.LENGTH_SHORT).show()
+                        onFailure()
+                    }
+                }
+            } catch (e: Exception) {
+                Toast.makeText(context, "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
+                onFailure()
+            }
+        }
     }
 }

@@ -3,6 +3,7 @@ package com.example.fitness.ui.main
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
@@ -16,23 +17,30 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.LinearInterpolator
 import android.view.animation.TranslateAnimation
-import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import com.example.fitness.LoginActivity
 import com.example.fitness.MainActivity
 import com.example.fitness.R
+import com.example.fitness.api.RetrofitClient
 import com.example.fitness.databinding.FragmentRunningBinding
+import com.example.fitness.dto.running.RunningRequest
+import com.example.fitness.dto.running.RunningResponse
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.jar.Manifest
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class RunningFragment : Fragment() {
@@ -74,6 +82,8 @@ class RunningFragment : Fragment() {
             stopButton.setOnClickListener {
                 showCustomDialog()
             }
+            val coin = arguments?.getInt("coin")
+            view.findViewById<TextView>(R.id.running_coin).text = coin.toString()
 
             /**
              * 애니메이션
@@ -162,7 +172,7 @@ class RunningFragment : Fragment() {
         timeText.text = formatTime(elapsedTime)
         distanceText.text = String.format("%.2f km", totalDistance / 1000)
         average_paceText.text = calculateAveragePace(elapsedTime, totalDistance) // 평균 페이스 표시
-        val coinNum = (totalDistance / 10).toInt()
+        val coinNum = (totalDistance * 10).toInt()
         coinText.text = coinNum.toString()
         // 닫기 버튼 클릭 이벤트
         closeButton.setOnClickListener {
@@ -175,6 +185,8 @@ class RunningFragment : Fragment() {
             requireActivity().finish() // 현재 액티비티 종료
         }
         dialog.show() // 팝업 표시
+
+        runningEnd(RunningRequest(totalDistance / 1000, elapsedTime.toInt()))
     }
 
     private fun calculateAveragePace(elapsedTime: Long, totalDistance: Float): String {
@@ -247,5 +259,22 @@ class RunningFragment : Fragment() {
         }
 
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
+    }
+
+    private fun runningEnd(request: RunningRequest) {
+        lifecycleScope.launch {
+            try {
+                val token =
+                    requireContext().getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+                        .getString("jwt_token", null)
+                if (token != null) {
+                    val response = withContext(Dispatchers.IO) {
+                        RetrofitClient.instance.runningEnd(token, request)
+                    }
+                }
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }

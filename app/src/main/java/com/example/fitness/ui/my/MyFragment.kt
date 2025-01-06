@@ -1,6 +1,7 @@
 package com.example.fitness.ui.my
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -53,7 +54,13 @@ class MyFragment : Fragment(R.layout.fragment_my) {
 
         val goButton = popupView.findViewById<ImageButton>(R.id.go_button)
         goButton.setOnClickListener {
-            // 메인 화면으로 이동
+            // 로그인 화면으로 이동 - 토큰 제거
+            val prefs = activity?.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+            prefs?.edit()?.apply {
+                remove("jwt_token") // jwt_token 삭제
+                apply()
+            }
+            
             val intent = Intent(requireContext(), LoginActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
             startActivity(intent)

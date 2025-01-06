@@ -1,11 +1,10 @@
 package com.example.fitness
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.example.fitness.databinding.ActivityMainBinding
@@ -23,12 +22,12 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // 로그인 상태 확인
-        if (!isUserLoggedIn()) {
-            // 로그인되지 않은 경우 LoginActivity로 이동
+        // 로그인 상태 체크
+        if (!isLoggedIn()) {
+            Log.d("d", "로그인 안됨")
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
-            finish() // MainActivity 종료
+            finish()
             return
         }
 
@@ -80,9 +79,9 @@ class MainActivity : AppCompatActivity() {
         transaction.commit()
     }
 
-    private fun isUserLoggedIn(): Boolean {
-        //로그인 기능 구현
-        val sharedPref = getSharedPreferences("user_pref", MODE_PRIVATE)
-        return sharedPref.getBoolean("isLoggedIn", false)
+    private fun isLoggedIn(): Boolean {
+        // SharedPreferences에서 로그인 상태를 확인
+        val prefs = getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+        return prefs.getString("jwt_token", null) != null
     }
 }
