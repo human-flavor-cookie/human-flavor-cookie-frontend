@@ -6,6 +6,7 @@ import com.example.fitness.dto.auth.MainPageResponse
 import com.example.fitness.dto.auth.SignupRequest
 import com.example.fitness.dto.cookie.CookieChangeRequestDto
 import com.example.fitness.dto.cookie.CookieListResponse
+import com.example.fitness.dto.my.MypageResponse
 import com.example.fitness.dto.ranking.AllRankingResponse
 import com.example.fitness.dto.ranking.DailyRankingResponse
 import com.example.fitness.dto.running.RunningRequest
@@ -31,6 +32,9 @@ interface ApiService {
 
     @GET("member/main-page")
     suspend fun loginMember(@Header("Authorization") token: String): Response<MainPageResponse>
+
+    @GET("member/profile")
+    suspend fun myPage(@Header("Authorization") token: String): Response<MypageResponse>
 
     //running
     @POST("api/running/end")
