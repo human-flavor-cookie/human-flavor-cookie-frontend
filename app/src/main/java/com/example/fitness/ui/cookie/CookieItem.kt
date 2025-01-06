@@ -8,6 +8,6 @@ data class CookieItem(
     val imageRes: Int, // 쿠키 이미지 리소스 ID
     val owned :Boolean,
 //    val distanceCumulated: Float,
-    val purchasable : Boolean,
-    val isSelected : Boolean
+    var purchasable : Boolean,
+    var isSelected : Boolean
 )
