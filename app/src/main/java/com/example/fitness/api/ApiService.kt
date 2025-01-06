@@ -15,6 +15,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.Query
 
 interface ApiService {
     //member
@@ -23,6 +24,9 @@ interface ApiService {
 
     @POST("member/login")
     suspend fun login(@Body request: LoginRequest): Response<LoginResponse>
+
+    @GET("member/check-email")
+    suspend fun checkEmail(@Query("email") email: String): Response<Map<String, Boolean>>
 
     @GET("member/main-page")
     suspend fun loginMember(@Header("Authorization") token: String): Response<MainPageResponse>
