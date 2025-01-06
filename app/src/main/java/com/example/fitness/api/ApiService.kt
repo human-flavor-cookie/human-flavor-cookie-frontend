@@ -6,6 +6,8 @@ import com.example.fitness.dto.auth.MainPageResponse
 import com.example.fitness.dto.auth.SignupRequest
 import com.example.fitness.dto.cookie.CookieChangeRequestDto
 import com.example.fitness.dto.cookie.CookieListResponse
+import com.example.fitness.dto.ranking.AllRankingResponse
+import com.example.fitness.dto.ranking.DailyRankingResponse
 import com.example.fitness.dto.running.RunningRequest
 import com.example.fitness.dto.running.RunningResponse
 import retrofit2.Response
@@ -14,6 +16,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.Query
 
 interface ApiService {
     //member
@@ -22,6 +25,9 @@ interface ApiService {
 
     @POST("member/login")
     suspend fun login(@Body request: LoginRequest): Response<LoginResponse>
+
+    @GET("member/check-email")
+    suspend fun checkEmail(@Query("email") email: String): Response<Map<String, Boolean>>
 
     @GET("member/main-page")
     suspend fun loginMember(@Header("Authorization") token: String): Response<MainPageResponse>
@@ -39,4 +45,11 @@ interface ApiService {
 
     @POST("api/cookie/purchase")
     suspend fun cookiePurchase(@Header("Authorization") token: String, @Body request: CookieChangeRequestDto): Response<Map<String, String>>
+
+    //ranking
+    @GET("member/ranking")
+    suspend fun ranking(@Header("Authorization") token: String): Response<AllRankingResponse>
+
+    @GET("member/dailyranking")
+    suspend fun dailyRanking(@Header("Authorization") token: String): Response<DailyRankingResponse>
 }

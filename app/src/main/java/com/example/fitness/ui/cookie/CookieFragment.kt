@@ -43,7 +43,7 @@ class CookieFragment : Fragment() {
             val cookieList = mutableListOf(
                 CookieItem(
                     name = "용감한맛 쿠키",
-                    properties = "ㅋ",
+                    properties = "용감함",
                     distanceWith = "함께 뛴 거리",
                     distanceWithInt = String.format("%.3fkm", cookie[0].accumulatedDistance),
                     imageRes = R.drawable.brave_cookie_cookietab,
@@ -54,10 +54,10 @@ class CookieFragment : Fragment() {
                 ),
                 CookieItem(
                     name = "좀비맛 쿠키",
-                    properties = "3회 부활가능",
+                    properties = "질긴 생명력",
                     distanceWith = "함께 뛴 거리",
                     distanceWithInt = String.format("%.3fkm", cookie[1].accumulatedDistance),
-                    imageRes = R.drawable.zombie_cookie_cookietab,
+                    imageRes = R.drawable.zombie_stand,
                     owned = cookie[1].owned,
                     //distanceCumulated = 50f,
                     purchasable = cookie[1].purchasable,
@@ -68,7 +68,7 @@ class CookieFragment : Fragment() {
                     properties = "기분이 좋아질 수도",
                     distanceWith = "함께 뛴 거리",
                     distanceWithInt = String.format("%.3fkm", cookie[2].accumulatedDistance),
-                    imageRes = R.drawable.happy_cookie_cookietab,
+                    imageRes = R.drawable.happy_stand,
                     owned = cookie[2].owned,
                     //distanceCumulated = 0f,
                     purchasable = cookie[2].purchasable,
@@ -76,16 +76,26 @@ class CookieFragment : Fragment() {
                 ),
                 CookieItem(
                     name = "천사맛 쿠키",
-                    properties = "보상 1.2배",
+                    properties = "부활",
                     distanceWith = "함께 뛴 거리",
-                    distanceWithInt = String.format("%.3fkm", cookie[4].accumulatedDistance),
-                    imageRes = R.drawable.angel_cookie_cookietab,
+                    distanceWithInt = String.format("%.3fkm", cookie[3].accumulatedDistance),
+                    imageRes = R.drawable.angel_stand,
                     owned = cookie[3].owned,
                     //distanceCumulated = 15f,
                     purchasable = cookie[3].purchasable,
                     isSelected = false
+                ),
+                CookieItem(
+                    name = "버터크림맛 쿠키",
+                    properties = "보상 1.2배",
+                    distanceWith = "함께 뛴 거리",
+                    distanceWithInt = String.format("%.3fkm", cookie[4].accumulatedDistance),
+                    imageRes = R.drawable.buttecookie_stand,
+                    owned = cookie[4].owned,
+                    //distanceCumulated = 15f,
+                    purchasable = cookie[4].purchasable,
+                    isSelected = false
                 )
-                //TODO: 버터맛 쿠키 추가 필요
             )
 
             // 어댑터 설정
