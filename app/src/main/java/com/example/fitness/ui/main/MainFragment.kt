@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import com.example.fitness.dto.auth.MainPageResponse
 import android.widget.Toast
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.PermissionController
@@ -148,17 +149,15 @@ class MainFragment : Fragment() {
         CoroutineScope(Dispatchers.Main).launch {
             var coin = loginMember()
             binding.mainStep.text = "오늘 총 걸음수 : \n$steps"
-            binding.mainGoal.text = String.format("%.3f km", distance / 1000)
-            binding.mainPercent.text = String.format("%.1f%%", distance / 10 / 5)
 
-            //TODO: 목표 맞춰 쿠키 이동
-            val cookieLayoutParams = binding.mainCookie.layoutParams as LinearLayout.LayoutParams
-            binding.mainCookie.setPadding(dpToPx(requireContext(), (distance / 1000 / 5 * 315 - 50).toInt()), 0, 0, 0)
-            binding.mainCookie.layoutParams = cookieLayoutParams
+////            //TODO: 목표 맞춰 쿠키 이동
+//            val cookieLayoutParams = binding.mainCookie.layoutParams as LinearLayout.LayoutParams
+//            binding.mainCookie.setPadding(dpToPx(requireContext(), (distance / 1000 / 5 * 315 - 50).toInt()), 0, 0, 0)
+//            binding.mainCookie.layoutParams = cookieLayoutParams
 
-            val progressLayoutParams = binding.mainProgress.layoutParams as FrameLayout.LayoutParams
-            progressLayoutParams.width = dpToPx(requireContext(), (distance / 1000 / 5 * 315).toInt())
-            binding.mainProgress.layoutParams = progressLayoutParams
+//            val progressLayoutParams = binding.mainProgress.layoutParams as FrameLayout.LayoutParams
+//            progressLayoutParams.width = dpToPx(requireContext(), (distance / 1000 / 5 * 315).toInt())
+//            binding.mainProgress.layoutParams = progressLayoutParams
 
             //시작 버튼 클릭
             binding.mainStart.setOnClickListener {
@@ -204,8 +203,23 @@ class MainFragment : Fragment() {
                 if (response.code() == 200) {
                     val memberName = response.body()?.name
                     coin = response.body()?.coin
+                    val goal = response.body()?.goalDistance?.toInt()
                     binding.mainName.text = "$memberName 님"
                     binding.mainCoin.text = coin.toString()
+                    binding.mainGoal.text = "오늘의 목표: " + goal.toString() + " km"
+                    val distanceToday = response.body()?.distanceToday
+                    binding.mainPercent.text = goal?.let { distanceToday?.times(100)?.div(it)?.toInt().toString() + " %"}
+
+                    var cookie_progress = distanceToday?.times(315)?.div(goal!!)?.minus(50)?.toInt().toString()
+
+                    val cookieLayoutParams = binding.mainCookie.layoutParams as LinearLayout.LayoutParams
+                    binding.mainCookie.setPadding(dpToPx(requireContext(), cookie_progress.toInt()), 0, 0, 0)
+                    binding.mainCookie.layoutParams = cookieLayoutParams
+
+                    val bar_progress = distanceToday?.times(315)?.div(goal!!)?.toInt().toString()
+                    val progressLayoutParams = binding.mainProgress.layoutParams as FrameLayout.LayoutParams
+                    progressLayoutParams.width = dpToPx(requireContext(), bar_progress.toInt())
+                    binding.mainProgress.layoutParams = progressLayoutParams
                 }
             }
         } catch (e: Exception) {

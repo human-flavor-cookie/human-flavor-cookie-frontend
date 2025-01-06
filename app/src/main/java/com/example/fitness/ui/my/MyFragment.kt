@@ -6,19 +6,33 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.fitness.LoginActivity
 import com.example.fitness.MainActivity
 import com.example.fitness.R
+import com.example.fitness.api.RetrofitClient
 import com.example.fitness.databinding.FragmentMyBinding
+import com.example.fitness.dto.my.MypageResponse
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import java.util.Optional.empty
 
 class MyFragment : Fragment(R.layout.fragment_my) {
+    private var _binding: FragmentMyBinding? = null
+    private val binding get() = _binding!!
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
@@ -31,7 +45,48 @@ class MyFragment : Fragment(R.layout.fragment_my) {
             showPopup()
         }
 
+        // Mypage 데이터를 가져오는 로직
+        lifecycleScope.launch {
+            // 데이터 설정
+            val userInfoData = loadMypageData()
+            view.findViewById<TextView>(R.id.user_name).text = userInfoData?.userName.toString()
+            val formattedDistance = String.format("%.1f", userInfoData?.dailyGoal ?: 0.0)
+            view.findViewById<TextView>(R.id.distance_day_user).text = "$formattedDistance"+"km"
+            val formattedTotalDistance = String.format("%.2f", userInfoData?.totalDistance ?: 0.0)
+            view.findViewById<TextView>(R.id.distance_cumulated_user).text = "$formattedTotalDistance"+"km"
+            val averageUserPace = userInfoData?.averagePace.toString()
+            val min_and_sec = averageUserPace.split(":")
+            view.findViewById<TextView>(R.id.running_pace_user).text = min_and_sec[0] + "' " + min_and_sec[1] + "''"
+            if (userInfoData?.consecutiveFailDays == 0) {
+                view.findViewById<TextView>(R.id.misson_days).text =
+                    userInfoData?.consecutiveSuccessDays.toString() + "일 연속 목표 달성 중🔥"
+            }
+            else view.findViewById<TextView>(R.id.misson_days).text =
+                userInfoData?.consecutiveFailDays.toString() + "일 연속 실패⚡⚡⚡"
+        }
+
         return view
+    }
+
+    private suspend fun loadMypageData(): MypageResponse? {
+        var userInfo: MypageResponse? = null
+        try {
+            val token = requireContext().getSharedPreferences("auth_prefs", Context.MODE_PRIVATE).getString("jwt_token", null)
+            if (token != null) {
+                Log.d("d", token.toString())
+                val response = withContext(Dispatchers.IO) {
+                    RetrofitClient.instance.myPage(token)
+                }
+                Log.d("d", response.toString())
+                if (response.code() == 200) {
+                    userInfo = response.body()
+                }
+            }
+        } catch (e: Exception) {
+            Log.d("d", "에러")
+            Toast.makeText(requireContext(), "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+        return userInfo
     }
 
     private fun showPopup() {
@@ -69,4 +124,6 @@ class MyFragment : Fragment(R.layout.fragment_my) {
         // 팝업 표시
         dialog.show()
     }
+
+
 }
