@@ -7,6 +7,7 @@ import com.example.fitness.dto.auth.SignupRequest
 import com.example.fitness.dto.cookie.CookieChangeRequestDto
 import com.example.fitness.dto.cookie.CookieListResponse
 import com.example.fitness.dto.ranking.AllRankingResponse
+import com.example.fitness.dto.ranking.DailyRankingResponse
 import com.example.fitness.dto.running.RunningRequest
 import com.example.fitness.dto.running.RunningResponse
 import retrofit2.Response
@@ -48,4 +49,7 @@ interface ApiService {
     //ranking
     @GET("member/ranking")
     suspend fun ranking(@Header("Authorization") token: String): Response<AllRankingResponse>
+
+    @GET("member/dailyranking")
+    suspend fun dailyRanking(@Header("Authorization") token: String): Response<DailyRankingResponse>
 }
