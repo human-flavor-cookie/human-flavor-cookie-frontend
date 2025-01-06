@@ -1,24 +1,17 @@
 package com.example.fitness.ui.ranking
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.databinding.DataBindingUtil
-import androidx.databinding.DataBindingUtil.setContentView
 import androidx.lifecycle.lifecycleScope
-import androidx.viewpager2.adapter.FragmentStateAdapter
-import androidx.viewpager2.widget.ViewPager2
 import com.example.fitness.R
 import com.example.fitness.api.RetrofitClient
 import com.example.fitness.databinding.FragmentRankingBinding
-import com.example.fitness.dto.cookie.CookieListResponse
 import com.example.fitness.dto.ranking.AllRankingResponse
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -32,179 +25,148 @@ class RankingFragment : Fragment(R.layout.fragment_ranking) {
 
     private lateinit var binding: FragmentRankingBinding
 
+    // 랭킹 데이터를 저장할 변수들
+    private var rankingList: AllRankingResponse? = null
+    private var rankingListAll: List<RankingItem> = listOf()
+    private var rankingListFriend: List<RankingItem> = listOf()
+    private var rankingListTier: List<RankingItem> = listOf()
+    private var rankingListMe: List<RankingItem> = listOf()
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         binding = FragmentRankingBinding.bind(view)
-        var rankingList: AllRankingResponse? = null
+
+        setupTabLayout()
 
         lifecycleScope.launch {
-            rankingList = ranking()
+            fetchRankingData()
+            updateTabContent(0) // "전체" 탭 초기 데이터 설정
+        }
+    }
 
-            // 데이터 설정
-            val rankingList_all = rankingList?.allRanks?.mapIndexed { _, rank ->
+    private suspend fun fetchRankingData() {
+        rankingList = ranking()
+
+        // 데이터 변환
+        rankingListAll = rankingList?.top3?.map { rank ->
+            RankingItem(
+                rank.rank,
+                rank.userName,
+                "${String.format("%.2f", rank.totalDistance)}km",
+                rank.consecutiveDays,
+                "일째", "달리는 중🔥",
+                cookiePick(rank.currentCookieId)
+            )
+        } ?: listOf()
+
+        rankingListFriend = listOf(
+            RankingItem(1, "안녕하세요", "15.34km", 18, "일째", "달리는 중🔥", R.drawable.brave_cookie),
+            RankingItem(2, "용쿠사기", "12.12km", 20, "일째", "달리는 중🔥", R.drawable.zombie_cookie),
+            RankingItem(3, "용쿠사기2", "4.05km", 25, "일째", "달리는 중🔥", R.drawable.brave_cookie)
+        )
+
+        rankingListTier = listOf(
+            RankingItem(1, "나에요", "15.34km", 18, "일째", "달리는 중🔥", R.drawable.myeongrang_cookie),
+            RankingItem(2, "수아드", "12.12km", 1, "일째", "달리는 중🔥", R.drawable.zombie_cookie),
+            RankingItem(3, "용쿠사기", "12.09km", 25, "일째", "달리는 중🔥", R.drawable.brave_cookie)
+        )
+
+        rankingListMe = rankingList?.userRank?.let { userRank ->
+            listOf(
                 RankingItem(
-                    rank.rank,
-                    rank.userName,
-                    "${rank.totalDistance}km",
-                    rank.consecutiveDays,
+                    userRank.rank,
+                    userRank.userName,
+                    "${String.format("%.2f", userRank.totalDistance)}km",
+                    userRank.consecutiveDays,
                     "일째", "달리는 중🔥",
-                    if (rank.userName == "나에요") R.drawable.zombie_cookie else R.drawable.brave_cookie
+                    cookiePick(userRank.currentCookieId)
                 )
-            } ?: listOf()// 데이터 설정
-            val rankingList_friend = listOf(
-                RankingItem(1, "안녕하세요", "15.34km", 18, "일째", "달리는 중🔥", R.drawable.brave_cookie),
-                RankingItem(2, "용쿠사기", "12.12km", 20, "일째", "달리는 중🔥", R.drawable.zombie_cookie),
-                RankingItem(3, "용쿠사기2", "4.05km", 25, "일째", "달리는 중🔥", R.drawable.brave_cookie)
-                // 더 많은 데이터 추가 가능
             )
+        } ?: listOf()
+    }
 
-            // 데이터 설정
-            val rankingList_tier = listOf(
-                RankingItem(1, "나에요", "15.34km", 18, "일째", "달리는 중🔥", R.drawable.myeongrang_cookie),
-                RankingItem(2, "수아드", "12.12km", 1, "일째", "달리는 중🔥", R.drawable.zombie_cookie),
-                RankingItem(3, "용쿠사기", "12.09km", 25, "일째", "달리는 중🔥", R.drawable.brave_cookie)
-                // 더 많은 데이터 추가 가능
-            )
+    private fun setupTabLayout() {
+        val tabLayout = binding.tabLayout
+        val viewPager = binding.viewPager
 
-            // 데이터 설정
-            val rankingList_me = listOf(
-                RankingItem(123, "주찬", "15.34km", 18, "일째", "달리는 중🔥", R.drawable.myeongrang_cookie),
-                RankingItem(4, "주찬", "15.34km", 18, "일째", "달리는 중🔥", R.drawable.myeongrang_cookie),
-                RankingItem(1, "주찬", "15.34km", 18, "일째", "달리는 중🔥", R.drawable.myeongrang_cookie)
-                // 더 많은 데이터 추가 가능
-            )
+        val adapter = RankingFragmentAdapter(this)
+        viewPager.adapter = adapter
 
+        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+            val customView = LayoutInflater.from(tabLayout.context)
+                .inflate(R.layout.custom_tab, null)
+            val tabText = customView.findViewById<TextView>(R.id.tab_text)
+            tabText.text = when (position) {
+                0 -> "전체"
+                1 -> "친구"
+                else -> "티어"
+            }
+            tab.customView = customView
+        }.attach()
 
-            val tabLayout = view.findViewById<TabLayout>(R.id.tabLayout)
-            val viewPager = view.findViewById<ViewPager2>(R.id.viewPager)
+        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                updateTabContent(tab?.position ?: 0)
+            }
 
-            // Adapter 설정
-            val adapter = RankingFragmentAdapter(this@RankingFragment)
-            viewPager.adapter = adapter
+            override fun onTabUnselected(tab: TabLayout.Tab?) {}
+            override fun onTabReselected(tab: TabLayout.Tab?) {}
+        })
+    }
 
-            // TabLayout과 ViewPager2 연결
-            TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-                // Inflate 커스텀 뷰
-                val customView = LayoutInflater.from(tabLayout.context)
-                    .inflate(R.layout.custom_tab, null)
-                val tabText = customView.findViewById<TextView>(R.id.tab_text)
-                tabText.text = when (position) {
-                    0 -> "전체"  // 첫 번째 탭
-                    1 -> "친구"  // 두 번째 탭
-                    else -> "티어"  // 세 번째 탭
-                }
-
-                // 탭에 커스텀 뷰 적용
-                tab.customView = customView
-            }.attach()
-
-            // "전체" 탭에 해당하는 초기 데이터 설정
-            val firstItem = rankingList_me[0] // 첫 번째 데이터 사용
-
-            // FrameLayout 내 요소들 초기값 설정
-            binding.rank.text = firstItem.rank.toString()
-            binding.rankImage.setImageResource(firstItem.imageResource)
-            binding.rankerName.text = firstItem.name
-            binding.rankerDistance.text = firstItem.distance
-            binding.rankerSuccess.text = firstItem.success.toString()
-
-            // TabLayout 선택 이벤트
-            tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-                override fun onTabSelected(tab: TabLayout.Tab?) {
-//                tab?.view?.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.cookie_brown))
-                    if (tab?.position == 0) { // "전체" 탭이 선택된 경우
-                        val firstItem = rankingList_all[0] // 첫 번째 데이터를 사용
-                        binding.first.setImageResource(firstItem.imageResource)
-                        binding.firstName.text = firstItem.name
-                        val secondItem = rankingList_all[1]
-                        binding.second.setImageResource(secondItem.imageResource)
-                        binding.secondName.text = secondItem.name
-                        val thirdItem = rankingList_all[2]
-                        binding.third.setImageResource(thirdItem.imageResource)
-                        binding.thirdName.text = thirdItem.name
-                        val user = rankingList_me[0]
-                        binding.rankerName.text = user.name
-                        binding.rankImage.setImageResource(user.imageResource)
-                        binding.rank.text = user.rank.toString()
-                        binding.rankerDistance.text = user.distance
-                        binding.rankerSuccess.text = user.success.toString()
-                    }
-                    else if (tab?.position == 1) {
-                        val firstItem = rankingList_friend[0] // 첫 번째 데이터를 사용
-                        binding.first.setImageResource(firstItem.imageResource)
-                        binding.firstName.text = firstItem.name
-                        val secondItem = rankingList_friend[1]
-                        binding.second.setImageResource(secondItem.imageResource)
-                        binding.secondName.text = secondItem.name
-                        val thirdItem = rankingList_friend[2]
-                        binding.third.setImageResource(thirdItem.imageResource)
-                        binding.thirdName.text = thirdItem.name
-                        val user = rankingList_me[1]
-                        binding.rankerName.text = user.name
-                        binding.rankImage.setImageResource(user.imageResource)
-                        binding.rank.text = user.rank.toString()
-                        binding.rankerDistance.text = user.distance
-                        binding.rankerSuccess.text = user.success.toString()
-                    }
-                    else {
-                        val firstItem = rankingList_tier[0] // 첫 번째 데이터를 사용
-                        binding.first.setImageResource(firstItem.imageResource)
-                        binding.firstName.text = firstItem.name
-                        val secondItem = rankingList_tier[1]
-                        binding.second.setImageResource(secondItem.imageResource)
-                        binding.secondName.text = secondItem.name
-                        val thirdItem = rankingList_tier[2]
-                        binding.third.setImageResource(thirdItem.imageResource)
-                        binding.thirdName.text = thirdItem.name
-                        val user = rankingList_me[2]
-                        binding.rankerName.text = user.name
-                        binding.rankImage.setImageResource(user.imageResource)
-                        binding.rank.text = user.rank.toString()
-                        binding.rankerDistance.text = user.distance
-                        binding.rankerSuccess.text = user.success.toString()
-                    }
-
-                }
-
-                override fun onTabUnselected(tab: TabLayout.Tab?) {
-//                // 비선택된 탭의 배경색 초기화
-//                tab?.view?.setBackgroundColor(ContextCompat.getColor(requireContext(), android.R.color.transparent))
-                }
-
-                override fun onTabReselected(tab: TabLayout.Tab?) {
-                    // 이미 선택된 탭 다시 선택 시 필요한 작업
-                }
-            })
-
+    @SuppressLint("SetTextI18n")
+    private fun updateTabContent(tabPosition: Int) {
+        val list = when (tabPosition) {
+            0 -> rankingListAll
+            1 -> rankingListFriend
+            else -> rankingListTier
         }
 
+        // 첫 번째, 두 번째, 세 번째 데이터 설정
+        if (list.size >= 3) {
+            binding.first.setImageResource(list[0].imageResource)
+            binding.firstName.text = list[0].name
+            binding.second.setImageResource(list[1].imageResource)
+            binding.secondName.text = list[1].name
+            binding.third.setImageResource(list[2].imageResource)
+            binding.thirdName.text = list[2].name
+        }
+
+        // 현재 유저 데이터 설정
+        val user = rankingListMe.getOrNull(tabPosition) ?: return
+        binding.rankerName.text = user.name
+        binding.rankImage.setImageResource(user.imageResource)
+        binding.rank.text = user.rank.toString()
+        binding.rankerDistance.text = user.distance
+        binding.rankerSuccess.text = user.success.toString()
     }
 
     private suspend fun ranking(): AllRankingResponse? {
-        var rankingList: AllRankingResponse ?= null
-        try {
-            val token = requireContext().getSharedPreferences("auth_prefs", Context.MODE_PRIVATE).getString("jwt_token", null)
-            if (token != null) {
+        return try {
+            val token = requireContext()
+                .getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+                .getString("jwt_token", null)
+            token?.let {
                 val response = withContext(Dispatchers.IO) {
-                    RetrofitClient.instance.ranking(token)
+                    RetrofitClient.instance.ranking(it)
                 }
-
-                if (response.code() == 200) {
-                    rankingList = response.body()
-                }
+                if (response.code() == 200) response.body() else null
             }
         } catch (e: Exception) {
             Toast.makeText(requireContext(), "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
+            null
         }
-        return rankingList
     }
 
-    private fun cookiePick(cookieId: Long): Int{
-        if(cookieId.toInt() == 1) return R.drawable.brave_cookie
-        if(cookieId.toInt() == 2) return R.drawable.brave_cookie
-        if(cookieId.toInt() == 3) return R.drawable.brave_cookie
-        if(cookieId.toInt() == 4) return R.drawable.brave_cookie
-        if(cookieId.toInt() == 5) return R.drawable.brave_cookie
+    private fun cookiePick(cookieId: Long): Int {
+        return when (cookieId.toInt()) {
+            1 -> R.drawable.brave_stand
+            2 -> R.drawable.zombie_stand
+            3 -> R.drawable.happy_stand
+            4 -> R.drawable.angel_stand
+            5 -> R.drawable.buttecookie_stand
+            else -> -1
+        }
     }
 }

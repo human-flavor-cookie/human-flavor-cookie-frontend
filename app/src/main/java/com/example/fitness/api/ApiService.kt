@@ -42,6 +42,6 @@ interface ApiService {
     suspend fun cookiePurchase(@Header("Authorization") token: String, @Body request: CookieChangeRequestDto): Response<Map<String, String>>
 
     //ranking
-    @GET("member/raking")
+    @GET("member/ranking")
     suspend fun ranking(@Header("Authorization") token: String): Response<AllRankingResponse>
 }
