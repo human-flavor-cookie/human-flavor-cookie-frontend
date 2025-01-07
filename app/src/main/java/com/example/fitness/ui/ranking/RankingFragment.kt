@@ -13,8 +13,10 @@ import androidx.lifecycle.lifecycleScope
 import com.example.fitness.R
 import com.example.fitness.api.RetrofitClient
 import com.example.fitness.databinding.FragmentRankingBinding
+import com.example.fitness.dto.my.MypageResponse
 import com.example.fitness.dto.ranking.AllRankingResponse
 import com.example.fitness.dto.ranking.DailyRankingResponse
+import com.example.fitness.dto.ranking.TargetRankingResponse
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,6 +32,7 @@ class RankingFragment : Fragment(R.layout.fragment_ranking) {
     // 랭킹 데이터를 저장할 변수들
     private var rankingList: AllRankingResponse? = null
     private var dailyRankingList: DailyRankingResponse? = null
+    private var targetRankingList: TargetRankingResponse? = null
     private var rankingListAll: List<RankingItem> = listOf()
     private var rankingListDaily: List<RankingItem> = listOf()
     private var rankingListTier: List<RankingItem> = listOf()
@@ -41,17 +44,24 @@ class RankingFragment : Fragment(R.layout.fragment_ranking) {
         binding = FragmentRankingBinding.bind(view)
 
         setupTabLayout()
-
+//        // main_coin TextView를 찾아서 사용
+//        val targetTier: TextView = view.findViewById(R.id.textView2)
         lifecycleScope.launch {
             fetchRankingData()
+//            val target = targetRanking()?.userRank?.currentTier
+//            targetTier.text = target.toString() // TextView 업데이트
             updateTabContent(0) // "전체" 탭 초기 데이터 설정
         }
+
     }
 
     private suspend fun fetchRankingData() {
         rankingList = ranking()
         dailyRankingList = dailyRanking()
-
+        targetRankingList = targetRanking()
+        val targetTier = view?.findViewById<TextView>(R.id.textView2)
+        targetTier?.text = targetRankingList?.userRank?.currentTier?.toInt().toString() +
+            "km 도전 중🔥"
         rankingListAll = rankingList?.top3?.map { rank ->
             RankingItem(
                 rank.rank,
@@ -70,15 +80,20 @@ class RankingFragment : Fragment(R.layout.fragment_ranking) {
                 "${String.format("%.2f", rank.dailyDistance)}km",
                 rank.consecutiveDays,
                 "일째", "달리는 중🔥",
-                cookiePick(rank.currentCookieId)
+                cookiePick(rank.currentCookieId),
             )
         } ?: listOf()
 
-        rankingListTier = listOf(
-            RankingItem(1, "나에요", "15.34km", 18, "일째", "달리는 중🔥", R.drawable.myeongrang_cookie),
-            RankingItem(2, "수아드", "12.12km", 1, "일째", "달리는 중🔥", R.drawable.zombie_cookie),
-            RankingItem(3, "용쿠사기", "12.09km", 25, "일째", "달리는 중🔥", R.drawable.brave_cookie)
-        )
+        rankingListTier = targetRankingList?.top3?.map { rank ->
+            RankingItem(
+                rank.targetRank,
+                rank.userName,
+                "${String.format("%.2f", rank.dailyDistance)}km",
+                rank.consecutiveDays,
+                "일째", "달리는 중🔥",
+                cookiePick(rank.currentCookieId)
+            )
+        } ?: listOf()
 
         rankingListMe = rankingList?.userRank?.let { userRank ->
             val mainRanking = listOf(
@@ -104,10 +119,23 @@ class RankingFragment : Fragment(R.layout.fragment_ranking) {
                     )
                 )
             } ?: listOf()
-
+            // dailyRankingList의 userRank 추가
+            val targetRanking = targetRankingList?.userRank?.let { targetUserRank ->
+                listOf(
+                    RankingItem(
+                        targetUserRank.targetRank,
+                        targetUserRank.userName,
+                        "${String.format("%.2f", targetUserRank.dailyDistance)}km",
+                        targetUserRank.consecutiveDays,
+                        "일째", "오늘도 열심히! 💪",
+                        cookiePick(targetUserRank.currentCookieId)
+                    )
+                )
+            } ?: listOf()
             // 두 리스트 합치기
-            mainRanking + dailyRanking
+            mainRanking + dailyRanking + targetRanking
         } ?: listOf()
+
     }
 
     private fun setupTabLayout() {
@@ -123,7 +151,8 @@ class RankingFragment : Fragment(R.layout.fragment_ranking) {
             val tabText = customView.findViewById<TextView>(R.id.tab_text)
             tabText.text = when (position) {
                 0 -> "전체"
-                1 -> "친구"
+                1 -> "일일"
+                2 -> "티어"
                 else -> "티어"
             }
             tab.customView = customView
@@ -131,6 +160,7 @@ class RankingFragment : Fragment(R.layout.fragment_ranking) {
 
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
+                Log.d("TabSelected", "Tab position: ${tab?.position}")
                 updateTabContent(tab?.position ?: 0)
             }
 
@@ -144,9 +174,21 @@ class RankingFragment : Fragment(R.layout.fragment_ranking) {
         val list = when (tabPosition) {
             0 -> rankingListAll
             1 -> rankingListDaily
+            2 -> rankingListTier
             else -> rankingListTier
         }
 
+        if (tabPosition == 2) { // Tier 탭
+            Log.d("Visibility", "Setting view and textView2 to VISIBLE")
+            binding.view.visibility = View.VISIBLE
+            binding.textView2.visibility = View.VISIBLE
+            //binding.textView2.text = "km 도전 중🔥"
+        } else {
+            Log.d("Visibility", "Setting view and textView2 to GONE")
+            binding.view.visibility = View.GONE
+            binding.textView2.visibility = View.GONE
+        }
+        Log.d("TabPosition", "Current tabPosition: $tabPosition")
         // 첫 번째, 두 번째, 세 번째 데이터 설정
         if (list.size >= 3) {
             binding.first.setImageResource(list[0].imageResource)
@@ -164,6 +206,9 @@ class RankingFragment : Fragment(R.layout.fragment_ranking) {
         binding.rank.text = user.rank.toString()
         binding.rankerDistance.text = user.distance
         binding.rankerSuccess.text = user.success.toString()
+        Log.d("tabposition", "tabPosition ${tabPosition}")
+        // "Tier" 탭에서만 View와 TextView를 표시
+
     }
 
     private suspend fun ranking(): AllRankingResponse? {
@@ -201,6 +246,24 @@ class RankingFragment : Fragment(R.layout.fragment_ranking) {
         }
     }
 
+    private suspend fun targetRanking(): TargetRankingResponse? {
+        return try {
+            val token = requireContext()
+                .getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+                .getString("jwt_token", null)
+            token?.let {
+                val response = withContext(Dispatchers.IO) {
+                    RetrofitClient.instance.targetRanking(it)
+                }
+                Log.d("d", response.body().toString())
+                if (response.code() == 200) response.body() else null
+            }
+        } catch (e: Exception) {
+            Toast.makeText(requireContext(), "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
+            null
+        }
+    }
+
     private fun cookiePick(cookieId: Long): Int {
         return when (cookieId.toInt()) {
             1 -> R.drawable.brave_stand
@@ -211,4 +274,27 @@ class RankingFragment : Fragment(R.layout.fragment_ranking) {
             else -> -1
         }
     }
+
+//    private suspend fun loadTarget(): TargetRankingResponse? {
+//        var targetTier: TargetRankingResponse? = null
+//        try {
+//            val token = requireContext()
+//                .getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+//                .getString("jwt_token", null)
+//            if (token != null) {
+//                Log.d("d", token.toString())
+//                val response = withContext(Dispatchers.IO) {
+//                    RetrofitClient.instance.
+//                }
+//                Log.d("d", response.toString())
+//                if (response.code() == 200) {
+//                    targetTier = response.body().
+//                }
+//            }
+//        } catch (e: Exception) {
+//            Log.d("d", "에러")
+//            Toast.makeText(requireContext(), "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
+//        }
+//        return targetTier
+//    }
 }

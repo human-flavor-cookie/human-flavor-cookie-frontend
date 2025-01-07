@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.media.Image
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -42,9 +43,19 @@ class MyFragment : Fragment(R.layout.fragment_my) {
         val view = inflater.inflate(R.layout.fragment_my, container, false)
 
         // 버튼 참조
-        val button = view.findViewById<Button>(R.id.button)
+        val button = view.findViewById<Button>(R.id.logout_button)
         button.setOnClickListener {
             showPopup()
+        }
+
+        val password_change_button = view.findViewById<Button>(R.id.password_change)
+        password_change_button.setOnClickListener{
+            showPasswordChangePopUp()
+        }
+
+        val target_distance_change_button = view.findViewById<Button>(R.id.target_distance_change_button)
+        target_distance_change_button.setOnClickListener{
+            //showTargetDistanceChangePopUp
         }
 
         // Mypage 데이터를 가져오는 로직
@@ -127,5 +138,38 @@ class MyFragment : Fragment(R.layout.fragment_my) {
         dialog.show()
     }
 
+    private fun showPasswordChangePopUp() {
+        // 팝업 레이아웃 Inflate
+        val inflater = LayoutInflater.from(requireContext())
+        val popupView = inflater.inflate(R.layout.password_change_layout, null)
 
+        // AlertDialog 생성
+        val dialog = AlertDialog.Builder(requireContext())
+
+            .setView(popupView)
+            .create()
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+
+        val goButton = popupView.findViewById<ImageButton>(R.id.go_button)
+        goButton.setOnClickListener{
+            // 로그인 화면으로 이동 - 토큰 제거
+            val prefs = activity?.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+            prefs?.edit()?.apply {
+                remove("jwt_token") // jwt_token 삭제
+                apply()
+            }
+
+            val intent = Intent(requireContext(), LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(intent)
+            requireActivity().finish() // 현재 액티비티 종료
+        }
+
+        val cancelButton = popupView.findViewById<ImageButton>(R.id.cancel_button)
+        cancelButton.setOnClickListener {
+            dialog.dismiss()
+        }
+        dialog.show()
+    }
 }
