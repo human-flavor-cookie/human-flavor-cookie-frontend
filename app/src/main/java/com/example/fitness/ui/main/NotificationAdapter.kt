@@ -1,5 +1,6 @@
 package com.example.fitness.ui.main
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,8 +8,12 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fitness.R
+import com.example.fitness.dto.friend.PendingResponseDto
 
-class NotificationAdapter(private val notifications: List<NotificationItem>) : RecyclerView.Adapter<NotificationAdapter.ViewHolder>() {
+class NotificationAdapter(
+    private val context: Context,
+    private val notifications: List<NotificationItem>
+) : RecyclerView.Adapter<NotificationAdapter.ViewHolder>() {
 
     // 데이터 모델 클래스
     data class NotificationItem(val name: String, val message: String)

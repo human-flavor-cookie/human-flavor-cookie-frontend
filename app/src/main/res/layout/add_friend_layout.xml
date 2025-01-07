@@ -27,7 +27,6 @@
             android:background="@drawable/login_background"
             android:fontFamily="@font/cookierun_regular"
             android:hint="이메일을 입력하세요..."
-            android:inputType="numberDecimal"
             android:lineSpacingExtra="1dp"
             android:paddingHorizontal="20dp"
             android:textColorHint="#E3B88D"

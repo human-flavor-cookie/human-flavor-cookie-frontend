@@ -25,6 +25,7 @@ import com.example.fitness.MainActivity
 import com.example.fitness.R
 import com.example.fitness.api.RetrofitClient
 import com.example.fitness.databinding.FragmentMyBinding
+import com.example.fitness.dto.friend.CreateFriendRequest
 import com.example.fitness.dto.my.MypageResponse
 import com.example.fitness.dto.my.UpdatePassword
 import com.example.fitness.dto.running.UpdateTarget
@@ -300,8 +301,6 @@ class MyFragment : Fragment(R.layout.fragment_my) {
                 }
             }
         }
-
-
     }
 
     private fun showAddFriendPopUp() {
@@ -320,6 +319,8 @@ class MyFragment : Fragment(R.layout.fragment_my) {
         val goButton = popupView.findViewById<ImageButton>(R.id.go_button)
         goButton.setOnClickListener{
             val friendEmailInput = emailInput.text.toString()
+            dialog.dismiss()
+            requestFriend(friendEmailInput)
         }
 
         val cancelButton = popupView.findViewById<ImageButton>(R.id.cancel_button)
@@ -327,5 +328,29 @@ class MyFragment : Fragment(R.layout.fragment_my) {
             dialog.dismiss()
         }
         dialog.show()
+    }
+
+    private fun requestFriend(email: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val token = requireContext().getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+                    .getString("jwt_token", null)
+                token?.let {
+                    val response = RetrofitClient.instance.createFriend(token, CreateFriendRequest(email))
+
+                    withContext(Dispatchers.Main) { // UI 작업은 메인 스레드에서 실행
+                        if (response.code() == 200) {
+                            Toast.makeText(requireContext(), "친구가 요청되었습니다.", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(requireContext(), "친구 요청에 실패했습니다.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) { // UI 작업은 메인 스레드에서 실행
+                    Toast.makeText(requireContext(), "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 }

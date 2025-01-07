@@ -6,6 +6,8 @@ import com.example.fitness.dto.auth.MainPageResponse
 import com.example.fitness.dto.auth.SignupRequest
 import com.example.fitness.dto.cookie.CookieChangeRequestDto
 import com.example.fitness.dto.cookie.CookieListResponse
+import com.example.fitness.dto.friend.CreateFriendRequest
+import com.example.fitness.dto.friend.PendingResponseDto
 import com.example.fitness.dto.my.MypageResponse
 import com.example.fitness.dto.my.UpdatePassword
 import com.example.fitness.dto.ranking.AllRankingResponse
@@ -68,4 +70,11 @@ interface ApiService {
 
     @GET("member/targetranking")
     suspend fun targetRanking(@Header("Authorization") token: String): Response<TargetRankingResponse>
+
+    //friend
+    @POST("friend-requests")
+    suspend fun createFriend(@Header("Authorization") token: String, @Body request: CreateFriendRequest): Response<Map<String, String>>
+
+    @GET("friend-requests/received-pending")
+    suspend fun friendReceiveList(@Header("Authorization") token: String): Response<List<PendingResponseDto>>
 }
