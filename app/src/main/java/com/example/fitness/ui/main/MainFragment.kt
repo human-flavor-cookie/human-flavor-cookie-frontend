@@ -32,6 +32,8 @@ import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.records.TotalCaloriesBurnedRecord
 import androidx.health.connect.client.request.ReadRecordsRequest
 import androidx.health.connect.client.time.TimeRangeFilter
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.fitness.Constants
 import com.example.fitness.R
 import com.example.fitness.api.RetrofitClient
@@ -97,6 +99,11 @@ class MainFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
+
+        // 알림 버튼 클릭 시 다이얼로그 띄우기
+        binding.notificationButton.setOnClickListener {
+            showNotificationsDialog()
+        }
         return binding.root
     }
 
@@ -317,4 +324,29 @@ class MainFragment : Fragment() {
             }
         }
     }
+
+    private fun showNotificationsDialog() {
+        val notifications = listOf(
+            NotificationAdapter.NotificationItem("홍길동", "안녕하세요, 반가워요!"),
+            NotificationAdapter.NotificationItem("김철수", "새로운 메시지가 도착했습니다."),
+            NotificationAdapter.NotificationItem("이영희", "친구 요청이 왔습니다."),
+            NotificationAdapter.NotificationItem("이병건", "새로운 메시지가 도착했습니다."),
+            NotificationAdapter.NotificationItem("김쿠키", "ㅋㅋㅋㅋㅋㅋㅋㅋ"),
+            NotificationAdapter.NotificationItem("박쿠키", "새로운 메시지가 도착했습니다."),
+            NotificationAdapter.NotificationItem("이쿠키", "친구 요청이 왔습니다.")
+        )
+
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.notification_popup, null)
+        val recyclerView: RecyclerView = dialogView.findViewById(R.id.notification_recycler_view)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.adapter = NotificationAdapter(notifications)
+
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .setCancelable(true)
+            .create()
+
+        dialog.show()
+    }
+
 }
