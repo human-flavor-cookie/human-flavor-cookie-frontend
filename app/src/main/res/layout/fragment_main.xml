@@ -124,6 +124,18 @@
             android:layout_marginTop="20dp"
             android:textSize="25dp"
             android:text="70%" />
+
+        <TextView
+            android:id="@+id/distance_now"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:fontFamily="@font/cookierun_bold"
+            android:textColor="@color/font_color"
+            android:textSize="18dp"
+            android:text="현재: 15km" />
+
         <TextView
             android:id="@+id/main_goal"
             android:layout_width="wrap_content"

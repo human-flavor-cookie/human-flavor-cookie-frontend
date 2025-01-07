@@ -207,11 +207,12 @@ class MainFragment : Fragment() {
                 if (response.code() == 200) {
                     val memberName = response.body()?.name
                     dto = response.body()
-                    val goal = response.body()?.goalDistance?.toInt()   //목표
+                    val goal = response.body()?.goalDistance  //목표
                     binding.mainName.text = "$memberName 님"
                     binding.mainCoin.text = dto?.coin.toString()
-                    binding.mainGoal.text = "오늘의 목표: " + goal.toString() + " km"
+                    binding.mainGoal.text = "오늘의 목표: " + String.format("%.1f", goal) + " km"
                     val distanceToday = response.body()?.distanceToday  //오늘 뛴 거리
+                    binding.distanceNow.text = "현재: " + String.format("%.1f", distanceToday) + " km"
                     binding.mainPercent.text = goal?.let { distanceToday?.times(100)?.div(it)?.toInt().toString() + " %"}
 
                     // cookie moving
@@ -262,6 +263,7 @@ class MainFragment : Fragment() {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
 
         submitButton.setOnClickListener {
+
             val inputText = goalInput.text.toString()
             val goal = inputText.toFloatOrNull()
 
