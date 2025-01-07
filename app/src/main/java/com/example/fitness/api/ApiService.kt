@@ -7,6 +7,7 @@ import com.example.fitness.dto.auth.SignupRequest
 import com.example.fitness.dto.cookie.CookieChangeRequestDto
 import com.example.fitness.dto.cookie.CookieListResponse
 import com.example.fitness.dto.my.MypageResponse
+import com.example.fitness.dto.my.UpdatePassword
 import com.example.fitness.dto.ranking.AllRankingResponse
 import com.example.fitness.dto.ranking.DailyRankingResponse
 import com.example.fitness.dto.ranking.TargetRankingResponse
@@ -40,6 +41,9 @@ interface ApiService {
 
     @POST("member/update-target")
     suspend fun updateTarget(@Header("Authorization") token: String, @Body request: UpdateTarget): Response<Map<String, String>>
+
+    @POST("member/password")
+    suspend fun changePassword(@Header("Authorization") token: String, @Body request: UpdatePassword): Response<Map<String, String>>
 
     //running
     @POST("api/running/end")
