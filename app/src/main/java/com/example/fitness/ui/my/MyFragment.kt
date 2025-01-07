@@ -62,6 +62,11 @@ class MyFragment : Fragment(R.layout.fragment_my) {
             showTargetDistanceChangePopUp()
         }
 
+        val add_friend_button = view .findViewById<Button>(R.id.add_friend)
+        add_friend_button.setOnClickListener{
+            showAddFriendPopUp()
+        }
+
         // Mypage 데이터를 가져오는 로직
         lifecycleScope.launch {
             // 데이터 설정
@@ -255,6 +260,32 @@ class MyFragment : Fragment(R.layout.fragment_my) {
                 }
             }
         }
+
+
     }
 
+    private fun showAddFriendPopUp() {
+        // 팝업 레이아웃 Inflate
+        val inflater = LayoutInflater.from(requireContext())
+        val popupView = inflater.inflate(R.layout.add_friend_layout, null)
+
+        // AlertDialog 생성
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(popupView)
+            .create()
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+
+        val emailInput = popupView.findViewById<EditText>(R.id.add_friend)
+        val goButton = popupView.findViewById<ImageButton>(R.id.go_button)
+        goButton.setOnClickListener{
+            val friendEmailInput = emailInput.text.toString()
+        }
+
+        val cancelButton = popupView.findViewById<ImageButton>(R.id.cancel_button)
+        cancelButton.setOnClickListener {
+            dialog.dismiss()
+        }
+        dialog.show()
+    }
 }
