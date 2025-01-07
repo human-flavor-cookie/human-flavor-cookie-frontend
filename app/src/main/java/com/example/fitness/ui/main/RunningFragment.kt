@@ -6,6 +6,8 @@ import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.location.Location
 import com.google.android.gms.location.LocationRequest;
 import android.os.Bundle
@@ -14,6 +16,7 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.view.animation.Animation
 import android.view.animation.LinearInterpolator
 import android.view.animation.TranslateAnimation
@@ -167,6 +170,8 @@ class RunningFragment : Fragment() {
      */
     private fun showCustomDialog() {
         val dialog = Dialog(requireContext())
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.running_end_layout)
 
         val timeText: TextView = dialog.findViewById(R.id.time_user)
@@ -181,6 +186,8 @@ class RunningFragment : Fragment() {
         average_paceText.text = calculateAveragePace(elapsedTime, totalDistance) // 평균 페이스 표시
         val coinNum = (totalDistance * 10).toInt()
         coinText.text = coinNum.toString()
+
+
         // 닫기 버튼 클릭 이벤트
         closeButton.setOnClickListener {
             dialog.dismiss() // 팝업 닫기

@@ -1,4 +1,5 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="#FFFFFF" />
-    <corners android:radius="40dp"/> <!-- 모서리 둥글게 -->
+    <solid android:color="@color/ranking_gray" />
+    <corners android:radius="40dp"/>
+    <stroke android:color="@color/white" android:width="2dp"/> <!-- 모서리 둥글게 -->
 </shape>
