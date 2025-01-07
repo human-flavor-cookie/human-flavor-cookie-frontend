@@ -3,5 +3,9 @@
     <style name="Theme.Fitness.Splash" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowIsTranslucent">true</item> // true => 투명처리
     </style>
-
+    <style name="CustomBottomNavigation" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="backgroundTint">@color/cookie_background</item> <!-- 배경색 -->
+        <item name="itemIconSize">28dp</item> <!-- 아이콘 크기 -->
+        <item name="itemRippleColor">@color/selected_color</item> <!-- 클릭 효과 색상 -->
+    </style>
 </resources>

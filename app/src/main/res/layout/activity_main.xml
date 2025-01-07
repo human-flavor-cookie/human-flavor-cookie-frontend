@@ -33,7 +33,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:menu="@menu/navigation_menu"
-            app:itemIconTint="@color/black"
+            app:itemIconTint="@color/nav_item_color"
             app:labelVisibilityMode="labeled"
             app:itemTextColor="@android:color/transparent"/>
 

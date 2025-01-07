@@ -10,4 +10,6 @@
     <color name="my_page_gray">#9E9E9E</color>
     <color name="cookie_background">#F2E9E3</color>
     <color name="company_logo">#FF5F00</color>
+    <color name="selected_color">#F4AC68</color>
+    <color name="unselected_color">#949494</color>
 </resources>
