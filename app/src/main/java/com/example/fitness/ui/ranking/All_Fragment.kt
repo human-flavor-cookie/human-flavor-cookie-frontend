@@ -35,7 +35,7 @@ class All_Fragment : Fragment(R.layout.fragment_all) {
                 rank.userName,
                 "${String.format("%.2f", rank.totalDistance)}km",
                 rank.consecutiveDays,
-                "일째", "달리는 중🔥",
+                "일째", streakGet(rank.successStreak),
                 cookiePick(rank.currentCookieId)
                 )
             } ?: listOf()
@@ -70,6 +70,13 @@ class All_Fragment : Fragment(R.layout.fragment_all) {
             4 -> R.drawable.angel_stand
             5 -> R.drawable.buttecookie_stand
             else -> -1
+        }
+    }
+
+    private fun streakGet(successStreak: Boolean): String {
+        return when (successStreak) {
+            false ->  "연속 실패⚡"
+            true -> "달리는 중🔥"
         }
     }
 }

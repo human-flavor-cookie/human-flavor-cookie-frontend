@@ -36,7 +36,7 @@ class Friend_Fragment : Fragment(R.layout.fragment_friend) {
                     rank.userName,
                     "${String.format("%.2f", rank.dailyDistance)}km",
                     rank.consecutiveDays,
-                    "일째", "달리는 중🔥",
+                    "일째", streakGet(rank.successStreak),
                     cookiePick(rank.currentCookieId)
                 )
             } ?: listOf()
@@ -80,4 +80,10 @@ class Friend_Fragment : Fragment(R.layout.fragment_friend) {
         }
     }
 
+    private fun streakGet(successStreak: Boolean): String {
+        return when (successStreak) {
+            false ->  "연속 실패⚡"
+            true -> "달리는 중🔥"
+        }
+    }
 }

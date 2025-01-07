@@ -6,6 +6,6 @@ data class TargetRankingItem(
     val currentCookieId: Long,
     val dailyDistance: Float,
     val consecutiveDays: Int,
-    val isSuccessStreak: Boolean,
+    val successStreak: Boolean,
     val currentTier: Float
 )

@@ -68,7 +68,7 @@ class RankingFragment : Fragment(R.layout.fragment_ranking) {
                 rank.userName,
                 "${String.format("%.2f", rank.totalDistance)}km",
                 rank.consecutiveDays,
-                "일째", "달리는 중🔥",
+                "일째", streakGet(rank.successStreak),
                 cookiePick(rank.currentCookieId)
             )
         } ?: listOf()
@@ -79,7 +79,7 @@ class RankingFragment : Fragment(R.layout.fragment_ranking) {
                 rank.userName,
                 "${String.format("%.2f", rank.dailyDistance)}km",
                 rank.consecutiveDays,
-                "일째", "달리는 중🔥",
+                "일째", streakGet(rank.successStreak),
                 cookiePick(rank.currentCookieId),
             )
         } ?: listOf()
@@ -90,7 +90,7 @@ class RankingFragment : Fragment(R.layout.fragment_ranking) {
                 rank.userName,
                 "${String.format("%.2f", rank.dailyDistance)}km",
                 rank.consecutiveDays,
-                "일째", "달리는 중🔥",
+                "일째", streakGet(rank.successStreak),
                 cookiePick(rank.currentCookieId)
             )
         } ?: listOf()
@@ -102,7 +102,7 @@ class RankingFragment : Fragment(R.layout.fragment_ranking) {
                     userRank.userName,
                     "${String.format("%.2f", userRank.totalDistance)}km",
                     userRank.consecutiveDays,
-                    "일째", "달리는 중🔥",
+                    "일째", streakGet(userRank.successStreak),
                     cookiePick(userRank.currentCookieId)
                 )
             )
@@ -275,26 +275,10 @@ class RankingFragment : Fragment(R.layout.fragment_ranking) {
         }
     }
 
-//    private suspend fun loadTarget(): TargetRankingResponse? {
-//        var targetTier: TargetRankingResponse? = null
-//        try {
-//            val token = requireContext()
-//                .getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
-//                .getString("jwt_token", null)
-//            if (token != null) {
-//                Log.d("d", token.toString())
-//                val response = withContext(Dispatchers.IO) {
-//                    RetrofitClient.instance.
-//                }
-//                Log.d("d", response.toString())
-//                if (response.code() == 200) {
-//                    targetTier = response.body().
-//                }
-//            }
-//        } catch (e: Exception) {
-//            Log.d("d", "에러")
-//            Toast.makeText(requireContext(), "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
-//        }
-//        return targetTier
-//    }
+    private fun streakGet(successStreak: Boolean): String {
+        return when (successStreak) {
+            false ->  "실패중⚡"
+            true -> "달리는 중🔥"
+        }
+    }
 }

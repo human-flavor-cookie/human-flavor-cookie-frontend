@@ -6,5 +6,5 @@ data class DailyRankingItem(
     val currentCookieId: Long,
     val dailyDistance: Float,
     val consecutiveDays: Int,
-    val isSuccessStreak: Boolean
+    val successStreak: Boolean
 )
