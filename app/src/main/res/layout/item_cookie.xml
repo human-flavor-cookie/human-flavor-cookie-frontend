@@ -34,7 +34,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/select_cookie" />
+        app:srcCompat="@drawable/cookie_price_background" />
 
 
     <View
@@ -109,6 +109,24 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/zombie_cookie_cookietab" />
+
+    <TextView
+        android:id="@+id/condition_or_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/cookierun_regular"
+        android:shadowColor="@color/black"
+        android:shadowDy="1"
+        android:shadowRadius="1"
+        android:text=""
+        android:gravity="center_horizontal"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/select_button"
+        app:layout_constraintEnd_toEndOf="@+id/select_button"
+        app:layout_constraintHorizontal_bias="0.654"
+        app:layout_constraintStart_toStartOf="@+id/select_button"
+        app:layout_constraintTop_toTopOf="@+id/select_button" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

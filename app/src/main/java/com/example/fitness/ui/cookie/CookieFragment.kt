@@ -64,6 +64,7 @@ class CookieFragment : Fragment() {
                     distanceWithInt = String.format("%.3fkm", cookie[0].accumulatedDistance),
                     imageRes = R.drawable.brave_stand,
                     owned = cookie[0].owned,
+                    priceOrConditon = cookie[0].cookiePrice.toString(),
                     //distanceCumulated = 5f,
                     purchasable = cookie[0].purchasable,
                     isSelected = true
@@ -75,6 +76,7 @@ class CookieFragment : Fragment() {
                     distanceWithInt = String.format("%.3fkm", cookie[1].accumulatedDistance),
                     imageRes = R.drawable.zombie_stand,
                     owned = cookie[1].owned,
+                    priceOrConditon = cookie[1].cookiePrice.toString(),
                     //distanceCumulated = 50f,
                     purchasable = cookie[1].purchasable,
                     isSelected = false
@@ -86,6 +88,7 @@ class CookieFragment : Fragment() {
                     distanceWithInt = String.format("%.3fkm", cookie[2].accumulatedDistance),
                     imageRes = R.drawable.happy_stand,
                     owned = cookie[2].owned,
+                    priceOrConditon = cookie[2].cookiePrice.toString(),
                     //distanceCumulated = 0f,
                     purchasable = cookie[2].purchasable,
                     isSelected = false
@@ -97,6 +100,7 @@ class CookieFragment : Fragment() {
                     distanceWithInt = String.format("%.3fkm", cookie[3].accumulatedDistance),
                     imageRes = R.drawable.angel_stand,
                     owned = cookie[3].owned,
+                    priceOrConditon = cookie[3].cookiePrice.toString(),
                     //distanceCumulated = 15f,
                     purchasable = cookie[3].purchasable,
                     isSelected = false
@@ -108,6 +112,7 @@ class CookieFragment : Fragment() {
                     distanceWithInt = String.format("%.3fkm", cookie[4].accumulatedDistance),
                     imageRes = R.drawable.buttecookie_stand,
                     owned = cookie[4].owned,
+                    priceOrConditon = cookie[4].cookiePrice.toString(),
                     //distanceCumulated = 15f,
                     purchasable = cookie[4].purchasable,
                     isSelected = false
