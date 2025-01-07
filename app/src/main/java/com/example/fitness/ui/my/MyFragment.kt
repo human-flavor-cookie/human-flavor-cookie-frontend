@@ -26,6 +26,7 @@ import com.example.fitness.R
 import com.example.fitness.api.RetrofitClient
 import com.example.fitness.databinding.FragmentMyBinding
 import com.example.fitness.dto.my.MypageResponse
+import com.example.fitness.dto.my.UpdatePassword
 import com.example.fitness.dto.running.UpdateTarget
 import com.example.fitness.ui.cookie.CookieFragment
 import com.example.fitness.ui.main.MainFragment
@@ -111,6 +112,9 @@ class MyFragment : Fragment(R.layout.fragment_my) {
         return userInfo
     }
 
+    /**
+     * 로그아웃
+     */
     private fun showPopup() {
         // 팝업 레이아웃 Inflate
         val inflater = LayoutInflater.from(requireContext())
@@ -118,7 +122,6 @@ class MyFragment : Fragment(R.layout.fragment_my) {
 
         // AlertDialog 생성
         val dialog = AlertDialog.Builder(requireContext())
-
             .setView(popupView)
             .create()
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -161,18 +164,27 @@ class MyFragment : Fragment(R.layout.fragment_my) {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
 
         val goButton = popupView.findViewById<ImageButton>(R.id.go_button)
+        val pw_new = popupView.findViewById<EditText>(R.id.pw_new)
+        val pw_confirm = popupView.findViewById<EditText>(R.id.pw_new_confirm)
+
         goButton.setOnClickListener{
             // 로그인 화면으로 이동 - 토큰 제거
-            val prefs = activity?.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
-            prefs?.edit()?.apply {
-                remove("jwt_token") // jwt_token 삭제
-                apply()
+            val newPassword = pw_new.text.toString() // EditText의 텍스트 가져오기
+            val confirmPassword = pw_confirm.text.toString()
+
+            if (newPassword.isBlank() || confirmPassword.isBlank()) {
+                Toast.makeText(requireContext(), "비밀번호를 입력해주세요.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
 
-            val intent = Intent(requireContext(), LoginActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-            startActivity(intent)
-            requireActivity().finish() // 현재 액티비티 종료
+            if (newPassword != confirmPassword) {
+                Toast.makeText(requireContext(), "비밀번호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            lifecycleScope.launch {
+                changePW(newPassword)   //백 연결
+            }
         }
 
         val cancelButton = popupView.findViewById<ImageButton>(R.id.cancel_button)
@@ -181,6 +193,33 @@ class MyFragment : Fragment(R.layout.fragment_my) {
         }
         dialog.show()
     }
+
+    private suspend fun changePW(pw: String) {
+        Log.d("d", "pw 변경 실행 시작")
+        try {
+            val token = requireContext()
+                .getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+                .getString("jwt_token", null)
+            if (token != null) {
+                val response = withContext(Dispatchers.IO) {
+                    RetrofitClient.instance.changePassword(token, UpdatePassword(pw))
+                }
+                if (response.code() == 200) {
+                    Toast.makeText(requireContext(), "비밀번호가 변경되었습니다.", Toast.LENGTH_SHORT).show()
+                    val prefs = activity?.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+                    prefs?.edit()?.apply {
+                        remove("jwt_token") // jwt_token 삭제
+                        apply()
+                    }
+                    val intent = Intent(requireContext(), LoginActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                    startActivity(intent)
+                    requireActivity().finish() // 현재 액티비티 종료
+                }
+            }
+        } catch (e: Exception) {
+            Toast.makeText(requireContext(), "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
 
     private fun showTargetDistanceChangePopUp() {
         // 팝업 레이아웃 Inflate
