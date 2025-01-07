@@ -220,6 +220,7 @@ class MyFragment : Fragment(R.layout.fragment_my) {
         } catch (e: Exception) {
             Toast.makeText(requireContext(), "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
         }
+    }
 
     private fun showTargetDistanceChangePopUp() {
         // 팝업 레이아웃 Inflate
