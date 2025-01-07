@@ -69,19 +69,16 @@ dependencies {
 
     /*material*/
     implementation 'com.google.android.material:material:1.12.0'
-
-//    /*firebase*/
-//    implementation platform('com.google.firebase:firebase-bom:33.1.1')
-//    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.android.material:material:1.6.0'  // TabLayout
+    implementation 'androidx.viewpager2:viewpager2:1.0.0'      // ViewPager2
 
     /*Health Connect*/
     implementation "androidx.health.connect:connect-client:1.1.0-alpha02"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3"
-    /*Google Play Services Location API*/
-    implementation 'com.google.android.gms:play-services-location:21.0.1'
 
-    implementation 'com.google.android.material:material:1.6.0'  // TabLayout
-    implementation 'androidx.viewpager2:viewpager2:1.0.0'      // ViewPager2
+    /*Google Map*/
+    implementation 'com.google.android.gms:play-services-maps:18.2.0'
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
 
     /*Retrofit*/
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'

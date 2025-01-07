@@ -4,13 +4,13 @@ import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import com.google.android.gms.location.LocationRequest;
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,18 +26,17 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
-import com.example.fitness.LoginActivity
-import com.example.fitness.MainActivity
 import com.example.fitness.R
 import com.example.fitness.api.RetrofitClient
 import com.example.fitness.databinding.FragmentRunningBinding
 import com.example.fitness.dto.running.RunningRequest
-import com.example.fitness.dto.running.RunningResponse
+import com.example.fitness.ui.map.MapFragment
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
+import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -47,6 +46,7 @@ import kotlinx.coroutines.withContext
 class RunningFragment : Fragment() {
     private var elapsedTime = 0L // 경과 시간 (초 단위)
     private val handler = Handler(Looper.getMainLooper())
+    private val routePoints = mutableListOf<LatLng>()   //경로 데이터 저장
 
     private lateinit var runnable: Runnable
 
@@ -163,6 +163,13 @@ class RunningFragment : Fragment() {
     }
 
     /**
+     * 위치 추적 종료
+     */
+    private fun stopLocationUpdates() {
+        fusedLocationClient.removeLocationUpdates(locationCallback) // 위치 추적 종료
+    }
+
+    /**
      * 커스텀 팝업 Dialog 띄우기
      */
     private fun showCustomDialog() {
@@ -184,12 +191,25 @@ class RunningFragment : Fragment() {
         // 닫기 버튼 클릭 이벤트
         closeButton.setOnClickListener {
             dialog.dismiss() // 팝업 닫기
+            stopLocationUpdates() // 위치 추적 종료
 
-            // 메인 화면으로 이동
-            val intent = Intent(requireContext(), MainActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-            startActivity(intent)
-            requireActivity().finish() // 현재 액티비티 종료
+            // MapFragment에 경로 데이터 전달
+            val bundle = Bundle().apply {
+                putParcelableArrayList("route_points", ArrayList(routePoints))
+            }
+            val mapFragment = MapFragment()
+            mapFragment.arguments = bundle
+
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.nav_host_fragment, mapFragment)
+                .addToBackStack(null)
+                .commit()
+
+//            // 메인 화면으로 이동
+//            val intent = Intent(requireContext(), MainActivity::class.java)
+//            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+//            startActivity(intent)
+//            requireActivity().finish() // 현재 액티비티 종료
         }
         dialog.show() // 팝업 표시
 
@@ -239,6 +259,7 @@ class RunningFragment : Fragment() {
 
                 val location = locationResult.lastLocation
                 if (location != null) {
+                    routePoints.add(LatLng(location.latitude, location.longitude)) // 경로 저장
                     // 거리 계산
                     if (previousLocation != null) {
                         val distance = previousLocation!!.distanceTo(location) // 두 위치 간 거리(m)
@@ -278,6 +299,7 @@ class RunningFragment : Fragment() {
                     val response = withContext(Dispatchers.IO) {
                         RetrofitClient.instance.runningEnd(token, request)
                     }
+                    Log.d("running", "end running")
                 }
             } catch (e: Exception) {
                 Toast.makeText(requireContext(), "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
