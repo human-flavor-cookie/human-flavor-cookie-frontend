@@ -50,6 +50,7 @@
 
             <EditText
                 android:id="@+id/login_pw"
+                android:inputType="textPassword"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:hint="비밀번호"

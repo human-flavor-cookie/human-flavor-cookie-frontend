@@ -19,6 +19,7 @@ import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.PermissionController
 import androidx.health.connect.client.permission.HealthPermission
@@ -285,25 +286,33 @@ class MainFragment : Fragment() {
                     val response = RetrofitClient.instance.updateTarget(token, UpdateTarget(newGoal))
 
                     if (response.code() == 200) {
-                        // 서버 업데이트 성공 시 UI 업데이트
                         withContext(Dispatchers.Main) {
                             Toast.makeText(requireContext(), "목표가 저장되었습니다.", Toast.LENGTH_SHORT).show()
+
+                            val fragmentManager = requireActivity().supportFragmentManager
+                            val currentFragment = fragmentManager.findFragmentByTag("MAIN_FRAGMENT_TAG")
+
+                            if (currentFragment != null) {
+                                fragmentManager.beginTransaction()
+                                    .remove(currentFragment)
+                                    .commitNow()
+                            }
+
+                            fragmentManager.beginTransaction()
+                                .replace(R.id.nav_host_fragment, MainFragment(), "MAIN_FRAGMENT_TAG")
+                                .commit()
                         }
                     } else {
-                        // 서버 응답 오류 처리
                         withContext(Dispatchers.Main) {
                             Toast.makeText(requireContext(), "목표 저장 실패: ${response.code()}", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
             } catch (e: Exception) {
-                // 네트워크 오류 처리
                 withContext(Dispatchers.Main) {
                     Toast.makeText(requireContext(), "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
             }
         }
     }
-
-
 }
