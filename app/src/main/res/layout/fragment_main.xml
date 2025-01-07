@@ -32,6 +32,15 @@
                 android:textSize="20dp"
                 android:text="용쿠사기 님" />
 
+            <!--알림-->
+            <ImageView
+                android:id="@+id/notification_button"
+                android:layout_width="25dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="23dp"
+                android:layout_marginLeft="10dp"
+                app:srcCompat="@drawable/notifications" />
+
             <!-- 재화 -->
             <LinearLayout
                 android:layout_width="match_parent"
@@ -68,13 +77,6 @@
 
         </LinearLayout>
         <!-- 걸음수 및 Progress Bar -->
-        <ImageView
-            android:id="@+id/notification_button"
-            android:layout_width="25dp"
-            android:layout_height="30dp"
-            android:layout_gravity="end"
-            android:layout_marginRight="30dp"
-            app:srcCompat="@drawable/notifications" />
         <TextView
             android:id="@+id/main_step"
             android:layout_width="wrap_content"

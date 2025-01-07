@@ -19,7 +19,6 @@ import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.PermissionController
 import androidx.health.connect.client.permission.HealthPermission
@@ -39,7 +38,9 @@ import com.example.fitness.R
 import com.example.fitness.api.RetrofitClient
 import com.example.fitness.databinding.FragmentMainBinding
 import com.example.fitness.dto.auth.MainPageResponse
+import com.example.fitness.dto.friend.PendingResponseDto
 import com.example.fitness.dto.running.UpdateTarget
+import com.example.fitness.ui.ranking.RankingItem
 import com.example.fitness.util.CustomToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -326,27 +327,55 @@ class MainFragment : Fragment() {
     }
 
     private fun showNotificationsDialog() {
-        val notifications = listOf(
-            NotificationAdapter.NotificationItem("홍길동", "안녕하세요, 반가워요!"),
-            NotificationAdapter.NotificationItem("김철수", "새로운 메시지가 도착했습니다."),
-            NotificationAdapter.NotificationItem("이영희", "친구 요청이 왔습니다."),
-            NotificationAdapter.NotificationItem("이병건", "새로운 메시지가 도착했습니다."),
-            NotificationAdapter.NotificationItem("김쿠키", "ㅋㅋㅋㅋㅋㅋㅋㅋ"),
-            NotificationAdapter.NotificationItem("박쿠키", "새로운 메시지가 도착했습니다."),
-            NotificationAdapter.NotificationItem("이쿠키", "친구 요청이 왔습니다.")
-        )
-
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.notification_popup, null)
         val recyclerView: RecyclerView = dialogView.findViewById(R.id.notification_recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        recyclerView.adapter = NotificationAdapter(notifications)
 
-        val dialog = AlertDialog.Builder(requireContext())
-            .setView(dialogView)
-            .setCancelable(true)
-            .create()
-
-        dialog.show()
+        // 네트워크 요청 후 RecyclerView 업데이트
+        CoroutineScope(Dispatchers.Main).launch {
+            val pendingList = pendingList() ?: emptyList() // 비동기 함수 호출
+            Log.d("d", "네트워크 실행")
+            if (pendingList.isNotEmpty()) {
+                val list = pendingList.map { member ->
+                    NotificationAdapter.NotificationItem(
+                        member.friendRequestId.toString(),
+                        "안녕하세요, 반가워요!"
+                    )
+                }
+                val dialog = AlertDialog.Builder(requireContext())
+                    .setView(dialogView)
+                    .setCancelable(true)
+                    .create()
+                dialog.show()
+                recyclerView.adapter = NotificationAdapter(requireContext(), list)
+            } else {
+                Toast.makeText(requireContext(), "친구 요청 목록이 없습니다.", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
+    private suspend fun pendingList(): List<PendingResponseDto>? {
+        return try {
+            val token = context?.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+                ?.getString("jwt_token", null)
+            if (token != null) {
+                val response = withContext(Dispatchers.IO) {
+                    RetrofitClient.instance.friendReceiveList(token)
+                }
+                Log.d("d", response.body().toString())
+                if (response.code() == 200) {
+                    Log.d("pendingList", "실행")
+                    response.body()
+                } else {
+                    Log.d("pendingList", "뭔가 문제있음")
+                    null
+                }
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            Toast.makeText(context, "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
+            null
+        }
+    }
 }
