@@ -46,6 +46,7 @@ class CookieAdapter(
         val distanceWithInt: TextView = itemView.findViewById(R.id.distance_with_int)
         val cookieImage: ImageView = itemView.findViewById(R.id.cookie_image)
         val selectButton: ImageView = itemView.findViewById(R.id.select_button)
+        val cookiePriceOrCondition: TextView = itemView.findViewById(R.id.condition_or_price)
         val itemLayout: View = itemView // 아이템 전체
     }
 
@@ -64,24 +65,37 @@ class CookieAdapter(
         holder.distanceWith.text = cookie.distanceWith
         holder.distanceWithInt.text = cookie.distanceWithInt
         holder.cookieImage.setImageResource(cookie.imageRes)
-
+        //holder.cookiePriceOrCondition.text = cookie.priceOrConditon
         // isDisabled 조건에 따라 select_button 이미지 변경
         // 깨진경우..해금 됐지만..
         if (cookie.purchasable) {
-            holder.selectButton.setImageResource(R.drawable.cookie_money) // 비활성화 이미지
-            if (cookie.name == "명랑한맛 쿠키") {
-                holder.cookieImage.setImageResource(R.drawable.happy_cookie_dead)
-            } else if (cookie.name == "용감한맛 쿠키") {
-
-            } else if (cookie.name == "좀비맛 쿠키") {
-
-            } else if (cookie.name == "천사맛 쿠키") {
-
-            }
+            holder.selectButton.setImageResource(R.drawable.cookie_price_background) // 비활성화 이미지
+            holder.cookiePriceOrCondition.text = cookie.priceOrConditon
+//            if (cookie.name == "명랑한맛 쿠키") {
+//
+//            } else if (cookie.name == "용감한맛 쿠키") {
+//
+//            } else if (cookie.name == "좀비맛 쿠키") {
+//
+//            } else if (cookie.name == "천사맛 쿠키") {
+//
+//            }
         }
         //해금 안된 경우
         else if (!cookie.owned && !cookie.purchasable){
-            holder.selectButton.setImageResource(R.drawable.cookie_lock) // 잠금
+            holder.selectButton.setImageResource(R.drawable.select_button_cookie_lock) // 잠금
+            if (cookie.name == "좀비맛 쿠키") {
+                holder.cookiePriceOrCondition.text = "1시간 동안 달리기"
+            } else if (cookie.name == "천사맛 쿠키") {
+                holder.cookiePriceOrCondition.text = "7일 연속 성공"
+            } else if (cookie.name == "버터크림맛 쿠키") {
+                holder.cookiePriceOrCondition.text = "누적 10km 달리기"
+            } else if (cookie.name == "용감한맛 쿠키") {
+                holder.cookiePriceOrCondition.text = ""
+            } else if (cookie.name == "명랑한맛 쿠키") {
+                holder.cookiePriceOrCondition.text = ""
+            }
+
 //            applyGrayscale(holder)
         }
         //해금 됐고.. 쿠키 안부셨는데.. 선택 안한 경우
