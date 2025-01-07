@@ -73,6 +73,11 @@ class SignupActivity : AppCompatActivity() {
                 val response = RetrofitClient.instance.signup(request)
                 if (response.code() == 200) {
                     Toast.makeText(this@SignupActivity, "회원가입 성공", Toast.LENGTH_SHORT).show()
+
+                    // LoginActivity로 이동
+                    val intent = Intent(this@SignupActivity, LoginActivity::class.java)
+                    startActivity(intent)
+                    finish()
                 } else {
                     val errorMessage = response.errorBody()?.string() ?: "회원가입 실패"
                     Toast.makeText(this@SignupActivity, errorMessage, Toast.LENGTH_SHORT).show()

@@ -89,7 +89,7 @@
                 android:id="@+id/main_cookie"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="60dp"
+                android:paddingLeft="0dp"
                 android:src="@drawable/brave_run_s" />
 
             <FrameLayout
@@ -104,7 +104,7 @@
                     android:background="@drawable/progress_white" />
                 <ImageView
                     android:id="@+id/main_progress"
-                    android:layout_width="134dp"
+                    android:layout_width="0dp"
                     android:layout_height="30dp"
                     android:scaleType="fitXY"
                     android:layout_marginBottom="10dp"

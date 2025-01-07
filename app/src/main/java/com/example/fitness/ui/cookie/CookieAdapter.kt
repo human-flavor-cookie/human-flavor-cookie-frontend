@@ -71,15 +71,16 @@ class CookieAdapter(
         if (cookie.purchasable) {
             holder.selectButton.setImageResource(R.drawable.cookie_price_background) // 비활성화 이미지
             holder.cookiePriceOrCondition.text = cookie.priceOrConditon
-//            if (cookie.name == "명랑한맛 쿠키") {
-//
-//            } else if (cookie.name == "용감한맛 쿠키") {
-//
-//            } else if (cookie.name == "좀비맛 쿠키") {
-//
-//            } else if (cookie.name == "천사맛 쿠키") {
-//
-//            }
+            //깨진 경우
+            if(!cookie.alive){
+                if (cookie.name == "명랑한맛 쿠키") {
+                    holder.cookieImage.setImageResource(R.drawable.happy_cookie_dead)
+                } else if (cookie.name == "버터크림맛 쿠키") {
+                    holder.cookieImage.setImageResource(R.drawable.buttecookie_die)
+                } else if (cookie.name == "천사맛 쿠키") {
+                    holder.cookieImage.setImageResource(R.drawable.angel_die)
+                }
+            }
         }
         //해금 안된 경우
         else if (!cookie.owned && !cookie.purchasable){

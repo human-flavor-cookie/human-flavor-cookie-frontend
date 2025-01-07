@@ -12,6 +12,7 @@ import com.example.fitness.dto.ranking.DailyRankingResponse
 import com.example.fitness.dto.ranking.TargetRankingResponse
 import com.example.fitness.dto.running.RunningRequest
 import com.example.fitness.dto.running.RunningResponse
+import com.example.fitness.dto.running.UpdateTarget
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -36,6 +37,9 @@ interface ApiService {
 
     @GET("member/profile")
     suspend fun myPage(@Header("Authorization") token: String): Response<MypageResponse>
+
+    @POST("member/update-target")
+    suspend fun updateTarget(@Header("Authorization") token: String, @Body request: UpdateTarget): Response<Map<String, String>>
 
     //running
     @POST("api/running/end")

@@ -67,7 +67,8 @@ class CookieFragment : Fragment() {
                     priceOrConditon = cookie[0].cookiePrice.toString(),
                     //distanceCumulated = 5f,
                     purchasable = cookie[0].purchasable,
-                    isSelected = true
+                    isSelected = cookie[0].equipped,
+                    alive = cookie[0].alive
                 ),
                 CookieItem(
                     name = "좀비맛 쿠키",
@@ -79,7 +80,8 @@ class CookieFragment : Fragment() {
                     priceOrConditon = cookie[1].cookiePrice.toString(),
                     //distanceCumulated = 50f,
                     purchasable = cookie[1].purchasable,
-                    isSelected = false
+                    isSelected = cookie[1].equipped,
+                    alive = cookie[1].alive
                 ),
                 CookieItem(
                     name = "명랑한맛 쿠키",
@@ -91,7 +93,8 @@ class CookieFragment : Fragment() {
                     priceOrConditon = cookie[2].cookiePrice.toString(),
                     //distanceCumulated = 0f,
                     purchasable = cookie[2].purchasable,
-                    isSelected = false
+                    isSelected = cookie[2].equipped,
+                    alive = cookie[2].alive
                 ),
                 CookieItem(
                     name = "천사맛 쿠키",
@@ -103,7 +106,8 @@ class CookieFragment : Fragment() {
                     priceOrConditon = cookie[3].cookiePrice.toString(),
                     //distanceCumulated = 15f,
                     purchasable = cookie[3].purchasable,
-                    isSelected = false
+                    isSelected = cookie[3].equipped,
+                    alive = cookie[3].alive
                 ),
                 CookieItem(
                     name = "버터크림맛 쿠키",
@@ -115,7 +119,8 @@ class CookieFragment : Fragment() {
                     priceOrConditon = cookie[4].cookiePrice.toString(),
                     //distanceCumulated = 15f,
                     purchasable = cookie[4].purchasable,
-                    isSelected = false
+                    isSelected = cookie[4].equipped,
+                    alive = cookie[4].alive
                 )
             )
 

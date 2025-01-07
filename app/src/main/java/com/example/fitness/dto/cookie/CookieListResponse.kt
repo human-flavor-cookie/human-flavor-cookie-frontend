@@ -6,5 +6,7 @@ data class CookieListResponse(
     val owned: Boolean,
     val cookiePrice: Int,
     val purchasable: Boolean,
-    val accumulatedDistance: Float
+    val accumulatedDistance: Float,
+    val alive: Boolean,
+    val equipped: Boolean
 )
