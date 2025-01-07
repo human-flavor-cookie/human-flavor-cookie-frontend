@@ -25,6 +25,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
 import com.example.fitness.LoginActivity
 import com.example.fitness.MainActivity
 import com.example.fitness.R
@@ -84,6 +85,12 @@ class RunningFragment : Fragment() {
             }
             val coin = arguments?.getInt("coin")
             view.findViewById<TextView>(R.id.running_coin).text = coin.toString()
+            val currentCookie = arguments?.getLong("currentCookie")
+            val gifResId = cookiePick(currentCookie)
+            if (gifResId != -1) {
+                val imageView = view.findViewById<ImageView>(R.id.running_cookie)
+                Glide.with(requireContext()).asGif().load(gifResId).into(imageView)
+            }
 
             /**
              * 애니메이션
@@ -275,6 +282,17 @@ class RunningFragment : Fragment() {
             } catch (e: Exception) {
                 Toast.makeText(requireContext(), "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+
+    private fun cookiePick(cookieId: Long?): Int {
+        return when (cookieId?.toInt()) {
+            1 -> R.drawable.brave_running
+            2 -> R.drawable.zombie_running
+            3 -> R.drawable.happy_running
+            4 -> R.drawable.angel_running
+            5 -> R.drawable.butter_cookie_running
+            else -> -1
         }
     }
 }

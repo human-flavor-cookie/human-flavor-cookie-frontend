@@ -21,7 +21,7 @@
             android:layout_marginTop="20dp">
 
             <FrameLayout
-                android:layout_width="wrap_content"
+                android:layout_width="105dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
                 android:orientation="horizontal">
@@ -184,9 +184,10 @@
 
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/running_cookie"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_gravity="center"
-            android:src="@drawable/running_cookie" />
+            android:src="@drawable/brave_run" />
     </FrameLayout>
 </LinearLayout>
