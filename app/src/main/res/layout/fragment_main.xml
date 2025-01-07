@@ -34,11 +34,11 @@
 
             <!-- 재화 -->
             <LinearLayout
-                android:layout_width="195dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginRight="10dp"
                 android:gravity="end|center_horizontal"
+                android:layout_marginRight="25dp"
+                android:layout_marginTop="20dp"
                 android:orientation="vertical">
 
                 <!-- coin -->
@@ -47,18 +47,16 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
                     android:orientation="horizontal">
-
                     <TextView
                         android:id="@+id/main_coin"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/coin_background"
+                        android:text="2310"
                         android:fontFamily="@font/cookierun_bold"
+                        android:textColor="#FFFFFF"
                         android:gravity="end|center_vertical"
                         android:paddingRight="15dp"
-                        android:text="2310"
-                        android:textColor="#FFFFFF" />
-
+                        android:background="@drawable/coin_background" />
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -67,17 +65,16 @@
                 </FrameLayout>
             </LinearLayout>
 
-            <ImageView
-                android:id="@+id/notification_button"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginTop="23dp"
-                app:srcCompat="@drawable/notifications" />
 
         </LinearLayout>
-
         <!-- 걸음수 및 Progress Bar -->
-
+        <ImageView
+            android:id="@+id/notification_button"
+            android:layout_width="25dp"
+            android:layout_height="30dp"
+            android:layout_gravity="end"
+            android:layout_marginRight="30dp"
+            app:srcCompat="@drawable/notifications" />
         <TextView
             android:id="@+id/main_step"
             android:layout_width="wrap_content"
@@ -192,5 +189,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:src="@drawable/die_cookie" />
+
     </LinearLayout>
+
+
 </LinearLayout>
+
