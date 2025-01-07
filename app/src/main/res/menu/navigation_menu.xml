@@ -7,16 +7,16 @@
 
     <item
         android:id="@+id/nav_cookie"
-        android:icon="@drawable/cookie"
+        android:icon="@drawable/baseline_cookie_24"
         android:title="쿠키" />
 
     <item
         android:id="@+id/nav_ranking"
-        android:icon="@drawable/ic_board"
+        android:icon="@drawable/ranking"
         android:title="랭킹" />
 
     <item
         android:id="@+id/nav_my"
-        android:icon="@drawable/ic_mypage"
+        android:icon="@drawable/profile"
         android:title="프로필" />
 </menu>
