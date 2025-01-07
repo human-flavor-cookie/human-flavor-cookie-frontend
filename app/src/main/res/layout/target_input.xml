@@ -6,6 +6,7 @@
     android:layout_width="300dp"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
+    app:cardElevation="0dp"
     android:orientation="vertical"
     app:cardBackgroundColor="@android:color/transparent">
 
@@ -13,6 +14,7 @@
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:paddingBottom="20dp"
         android:background="@drawable/logout_background">
 
         <TextView

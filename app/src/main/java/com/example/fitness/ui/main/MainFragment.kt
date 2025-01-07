@@ -3,6 +3,8 @@ package com.example.fitness.ui.main
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -10,9 +12,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
+import android.widget.EditText
 import android.widget.FrameLayout
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.PermissionController
 import androidx.health.connect.client.permission.HealthPermission
@@ -30,6 +36,7 @@ import com.example.fitness.R
 import com.example.fitness.api.RetrofitClient
 import com.example.fitness.databinding.FragmentMainBinding
 import com.example.fitness.dto.auth.MainPageResponse
+import com.example.fitness.dto.running.UpdateTarget
 import com.example.fitness.util.CustomToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -147,6 +154,11 @@ class MainFragment : Fragment() {
 
         CoroutineScope(Dispatchers.Main).launch {
             var dto = loginMember()
+            if (dto?.goalDistance == 0.0) {
+                showGoalInputDialog { newGoal ->
+                    onGoalSet(newGoal)
+                }
+            }
             binding.mainStep.text = "오늘 총 걸음수 : \n$steps"
 
             //시작 버튼 클릭
@@ -235,4 +247,63 @@ class MainFragment : Fragment() {
             else -> -1
         }
     }
+
+    private fun showGoalInputDialog(onGoalSet: (Float) -> Unit) {
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.target_input, null)
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .create()
+
+        val goalInput = dialogView.findViewById<EditText>(R.id.login_email)
+        val submitButton = dialogView.findViewById<ImageButton>(R.id.go_button)
+
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+
+        submitButton.setOnClickListener {
+            val inputText = goalInput.text.toString()
+            val goal = inputText.toFloatOrNull()
+
+            if (goal != null && goal > 0) {
+                dialog.dismiss()
+                onGoalSet(goal) //서버에 전송
+            } else {
+                Toast.makeText(requireContext(), "올바른 값을 입력하세요.", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        dialog.show()
+    }
+
+    private fun onGoalSet(newGoal: Float) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val token = requireContext().getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+                    .getString("jwt_token", null)
+
+                token?.let {
+                    val response = RetrofitClient.instance.updateTarget(token, UpdateTarget(newGoal))
+
+                    if (response.code() == 200) {
+                        // 서버 업데이트 성공 시 UI 업데이트
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(requireContext(), "목표가 저장되었습니다.", Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        // 서버 응답 오류 처리
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(requireContext(), "목표 저장 실패: ${response.code()}", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                // 네트워크 오류 처리
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(requireContext(), "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+
 }
