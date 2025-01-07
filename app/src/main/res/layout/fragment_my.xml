@@ -196,7 +196,7 @@
         android:id="@+id/add_friend"
         android:layout_width="320dp"
         android:layout_height="38dp"
-        android:layout_marginTop="440dp"
+        android:layout_marginTop="403dp"
         android:background="@android:color/transparent"
         android:text=""
         app:layout_constraintEnd_toEndOf="parent"

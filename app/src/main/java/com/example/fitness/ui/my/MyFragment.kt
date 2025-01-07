@@ -27,7 +27,10 @@ import com.example.fitness.api.RetrofitClient
 import com.example.fitness.databinding.FragmentMyBinding
 import com.example.fitness.dto.my.MypageResponse
 import com.example.fitness.dto.my.UpdatePassword
+import com.example.fitness.dto.running.UpdateTarget
 import com.example.fitness.ui.cookie.CookieFragment
+import com.example.fitness.ui.main.MainFragment
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -57,7 +60,12 @@ class MyFragment : Fragment(R.layout.fragment_my) {
 
         val target_distance_change_button = view.findViewById<Button>(R.id.target_distance_change_button)
         target_distance_change_button.setOnClickListener{
-            //showTargetDistanceChangePopUp
+            showTargetDistanceChangePopUp()
+        }
+
+        val add_friend_button = view .findViewById<Button>(R.id.add_friend)
+        add_friend_button.setOnClickListener{
+            showAddFriendPopUp()
         }
 
         // Mypage 데이터를 가져오는 로직
@@ -212,5 +220,111 @@ class MyFragment : Fragment(R.layout.fragment_my) {
         } catch (e: Exception) {
             Toast.makeText(requireContext(), "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
         }
+
+    private fun showTargetDistanceChangePopUp() {
+        // 팝업 레이아웃 Inflate
+        val inflater = LayoutInflater.from(requireContext())
+        val popupView = inflater.inflate(R.layout.target_distance_change_layout, null)
+
+        // 이전 목표 거리 가져오기
+        val sharedPreferences = requireContext().getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+        val previousGoal = sharedPreferences.getFloat("previous_goal", 0f)
+        // AlertDialog 생성
+        val dialog = AlertDialog.Builder(requireContext())
+
+            .setView(popupView)
+            .create()
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+
+        val goalInput = popupView.findViewById<EditText>(R.id.target_distance)
+        val goButton = popupView.findViewById<ImageButton>(R.id.go_button)
+        goButton.setOnClickListener{
+
+            val inputText = goalInput.text.toString()
+            val goal = inputText.toFloatOrNull()
+            if (goal != null && goal > 0) {
+                if (goal > previousGoal) {
+                    dialog.dismiss()
+                    onGoalSet(goal) // 서버에 전송
+                    // 새로운 목표를 SharedPreferences에 저장
+                    sharedPreferences.edit().putFloat("previous_goal", goal).apply()
+                } else {
+                    Toast.makeText(requireContext(), "이전 목표보다 큰 값을 입력해주세요.", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(requireContext(), "올바른 값을 입력하세요.", Toast.LENGTH_SHORT).show()
+            }
+
+        }
+
+        val cancelButton = popupView.findViewById<ImageButton>(R.id.cancel_button)
+        cancelButton.setOnClickListener {
+            dialog.dismiss()
+        }
+        dialog.show()
+    }
+
+    private fun onGoalSet(newGoal: Float) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val token = requireContext().getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+                    .getString("jwt_token", null)
+
+                token?.let {
+                    val response = RetrofitClient.instance.updateTarget(token, UpdateTarget(newGoal))
+
+                    if (response.code() == 200) {
+                        withContext(Dispatchers.Main) {
+
+                            Toast.makeText(requireContext(), "목표가 저장되었습니다.", Toast.LENGTH_SHORT).show()
+                            // 최신 데이터 가져와 반영
+                            lifecycleScope.launch {
+                                val updatedData = loadMypageData()
+                                updatedData?.let { data ->
+                                    val formattedDistance = String.format("%.1f", data.dailyGoal)
+                                    view?.findViewById<TextView>(R.id.distance_day_user)?.text = "$formattedDistance km"
+                                }
+                            }
+                        }
+                    } else {
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(requireContext(), "목표 저장 실패: ${response.code()}", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(requireContext(), "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+
+    }
+
+    private fun showAddFriendPopUp() {
+        // 팝업 레이아웃 Inflate
+        val inflater = LayoutInflater.from(requireContext())
+        val popupView = inflater.inflate(R.layout.add_friend_layout, null)
+
+        // AlertDialog 생성
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(popupView)
+            .create()
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+
+        val emailInput = popupView.findViewById<EditText>(R.id.add_friend)
+        val goButton = popupView.findViewById<ImageButton>(R.id.go_button)
+        goButton.setOnClickListener{
+            val friendEmailInput = emailInput.text.toString()
+        }
+
+        val cancelButton = popupView.findViewById<ImageButton>(R.id.cancel_button)
+        cancelButton.setOnClickListener {
+            dialog.dismiss()
+        }
+        dialog.show()
     }
 }

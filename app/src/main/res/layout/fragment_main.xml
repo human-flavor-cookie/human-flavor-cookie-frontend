@@ -1,5 +1,6 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/main_background"
@@ -33,11 +34,11 @@
 
             <!-- 재화 -->
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="195dp"
                 android:layout_height="wrap_content"
-                android:gravity="end|center_horizontal"
-                android:layout_marginRight="25dp"
                 android:layout_marginTop="20dp"
+                android:layout_marginRight="10dp"
+                android:gravity="end|center_horizontal"
                 android:orientation="vertical">
 
                 <!-- coin -->
@@ -46,16 +47,18 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
                     android:orientation="horizontal">
+
                     <TextView
                         android:id="@+id/main_coin"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="2310"
+                        android:background="@drawable/coin_background"
                         android:fontFamily="@font/cookierun_bold"
-                        android:textColor="#FFFFFF"
                         android:gravity="end|center_vertical"
                         android:paddingRight="15dp"
-                        android:background="@drawable/coin_background" />
+                        android:text="2310"
+                        android:textColor="#FFFFFF" />
+
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -63,9 +66,18 @@
                         android:src="@drawable/silver_coin" />
                 </FrameLayout>
             </LinearLayout>
+
+            <ImageView
+                android:id="@+id/notification_button"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="23dp"
+                app:srcCompat="@drawable/notifications" />
+
         </LinearLayout>
 
         <!-- 걸음수 및 Progress Bar -->
+
         <TextView
             android:id="@+id/main_step"
             android:layout_width="wrap_content"
@@ -79,10 +91,10 @@
             android:text="오늘 총 걸음수 : \n8213" />
 
         <LinearLayout
-            android:layout_marginTop="20dp"
-            android:layout_width="match_parent"
+            android:layout_width="466dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="20dp"
             android:orientation="vertical">
 
             <ImageView
@@ -95,20 +107,22 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
                 <ImageView
                     android:layout_width="315dp"
                     android:layout_height="30dp"
-                    android:scaleType="fitXY"
                     android:layout_marginBottom="10dp"
+                    android:background="@drawable/progress_white"
                     android:elevation="2dp"
-                    android:background="@drawable/progress_white" />
+                    android:scaleType="fitXY" />
+
                 <ImageView
                     android:id="@+id/main_progress"
                     android:layout_width="0dp"
                     android:layout_height="30dp"
-                    android:scaleType="fitXY"
                     android:layout_marginBottom="10dp"
                     android:elevation="2dp"
+                    android:scaleType="fitXY"
                     android:src="@drawable/progress_orange" />
             </FrameLayout>
         </LinearLayout>
@@ -124,6 +138,18 @@
             android:layout_marginTop="20dp"
             android:textSize="25dp"
             android:text="70%" />
+
+        <TextView
+            android:id="@+id/distance_now"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:fontFamily="@font/cookierun_bold"
+            android:textColor="@color/font_color"
+            android:textSize="18dp"
+            android:text="현재: 15km" />
+
         <TextView
             android:id="@+id/main_goal"
             android:layout_width="wrap_content"
