@@ -42,7 +42,7 @@
 
                 <!-- coin -->
                 <FrameLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="105dp"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
                     android:orientation="horizontal">
@@ -90,7 +90,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="60dp"
-                android:src="@drawable/running_cookie" />
+                android:src="@drawable/brave_run_s" />
 
             <FrameLayout
                 android:layout_width="match_parent"

@@ -12,7 +12,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.LinearLayout
-import com.example.fitness.dto.auth.MainPageResponse
 import android.widget.Toast
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.PermissionController
@@ -26,11 +25,11 @@ import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.records.TotalCaloriesBurnedRecord
 import androidx.health.connect.client.request.ReadRecordsRequest
 import androidx.health.connect.client.time.TimeRangeFilter
-import androidx.lifecycle.lifecycleScope
 import com.example.fitness.Constants
 import com.example.fitness.R
 import com.example.fitness.api.RetrofitClient
 import com.example.fitness.databinding.FragmentMainBinding
+import com.example.fitness.dto.auth.MainPageResponse
 import com.example.fitness.util.CustomToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -147,24 +146,16 @@ class MainFragment : Fragment() {
         val distance = distanceResponse.records.sumOf { it.distance.inMeters }
 
         CoroutineScope(Dispatchers.Main).launch {
-            var coin = loginMember()
+            var dto = loginMember()
             binding.mainStep.text = "오늘 총 걸음수 : \n$steps"
-
-////            //TODO: 목표 맞춰 쿠키 이동
-//            val cookieLayoutParams = binding.mainCookie.layoutParams as LinearLayout.LayoutParams
-//            binding.mainCookie.setPadding(dpToPx(requireContext(), (distance / 1000 / 5 * 315 - 50).toInt()), 0, 0, 0)
-//            binding.mainCookie.layoutParams = cookieLayoutParams
-
-//            val progressLayoutParams = binding.mainProgress.layoutParams as FrameLayout.LayoutParams
-//            progressLayoutParams.width = dpToPx(requireContext(), (distance / 1000 / 5 * 315).toInt())
-//            binding.mainProgress.layoutParams = progressLayoutParams
 
             //시작 버튼 클릭
             binding.mainStart.setOnClickListener {
-                if(coin != null){
+                if(dto != null){
                     val fragment = RunningFragment()
                     val bundle = Bundle()
-                    bundle.putInt("coin", coin)
+                    bundle.putInt("coin", dto.coin)
+                    bundle.putLong("currentCookie", dto.currentCookieId)
                     fragment.arguments = bundle
 
                     val transaction = parentFragmentManager.beginTransaction()
@@ -190,8 +181,8 @@ class MainFragment : Fragment() {
     }
 
     @SuppressLint("SetTextI18n")
-    private suspend fun loginMember(): Int? {
-        var coin: Int? = null
+    private suspend fun loginMember(): MainPageResponse? {
+        var dto: MainPageResponse? = null
 
         try {
             val token = requireContext().getSharedPreferences("auth_prefs", Context.MODE_PRIVATE).getString("jwt_token", null)
@@ -202,29 +193,46 @@ class MainFragment : Fragment() {
 
                 if (response.code() == 200) {
                     val memberName = response.body()?.name
-                    coin = response.body()?.coin
-                    val goal = response.body()?.goalDistance?.toInt()
+                    dto = response.body()
+                    val goal = response.body()?.goalDistance?.toInt()   //목표
                     binding.mainName.text = "$memberName 님"
-                    binding.mainCoin.text = coin.toString()
+                    binding.mainCoin.text = dto?.coin.toString()
                     binding.mainGoal.text = "오늘의 목표: " + goal.toString() + " km"
-                    val distanceToday = response.body()?.distanceToday
+                    val distanceToday = response.body()?.distanceToday  //오늘 뛴 거리
                     binding.mainPercent.text = goal?.let { distanceToday?.times(100)?.div(it)?.toInt().toString() + " %"}
 
+                    // cookie moving
                     var cookie_progress = distanceToday?.times(315)?.div(goal!!)?.minus(50)?.toInt().toString()
 
                     val cookieLayoutParams = binding.mainCookie.layoutParams as LinearLayout.LayoutParams
                     binding.mainCookie.setPadding(dpToPx(requireContext(), cookie_progress.toInt()), 0, 0, 0)
                     binding.mainCookie.layoutParams = cookieLayoutParams
 
+                    // pregress bar
                     val bar_progress = distanceToday?.times(315)?.div(goal!!)?.toInt().toString()
                     val progressLayoutParams = binding.mainProgress.layoutParams as FrameLayout.LayoutParams
                     progressLayoutParams.width = dpToPx(requireContext(), bar_progress.toInt())
                     binding.mainProgress.layoutParams = progressLayoutParams
+
+                    // 현재 쿠키
+                    var current_cookie = response.body()?.currentCookieId
+                    binding.mainCookie.setImageResource(cookiePick(current_cookie))
                 }
             }
         } catch (e: Exception) {
             Toast.makeText(requireContext(), "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
         }
-        return coin
+        return dto
+    }
+
+    private fun cookiePick(cookieId: Long?): Int {
+        return when (cookieId?.toInt()) {
+            1 -> R.drawable.brave_run_s
+            2 -> R.drawable.zombie_run_s
+            3 -> R.drawable.happy_run_s
+            4 -> R.drawable.angel_run_s
+            5 -> R.drawable.buttercookie_run_s
+            else -> -1
+        }
     }
 }
