@@ -4,6 +4,13 @@
         <!-- Customize your light theme here. -->
         <item name="windowNoTitle">true</item>
         <item name="android:windowBackground">@color/white</item>
+
+        <item name="colorPrimary">@color/selected_color</item>
+        <item name="colorPrimaryVariant">@color/cookie_brown</item>
+        <item name="colorAccent">@color/selected_color</item>
+
+        <!-- BottomNavigationView 배경색 -->
+        <item name="bottomNavigationStyle">@style/CustomBottomNavigation</item>
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 

@@ -2,21 +2,21 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/nav_home"
-        android:icon="@drawable/ic_home"
-        android:title="MAIN" />
+        android:icon="@drawable/running"
+        android:title="RUN!" />
 
     <item
         android:id="@+id/nav_cookie"
-        android:icon="@drawable/ic_board"
-        android:title="BOARD" />
+        android:icon="@drawable/cookie"
+        android:title="쿠키" />
 
     <item
         android:id="@+id/nav_ranking"
-        android:icon="@drawable/ic_mypage"
-        android:title="RANKING" />
+        android:icon="@drawable/ic_board"
+        android:title="랭킹" />
 
     <item
         android:id="@+id/nav_my"
         android:icon="@drawable/ic_mypage"
-        android:title="MY" />
+        android:title="프로필" />
 </menu>
