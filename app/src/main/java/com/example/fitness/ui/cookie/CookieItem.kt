@@ -10,5 +10,6 @@ data class CookieItem(
     val priceOrConditon: String,
 //    val distanceCumulated: Float,
     var purchasable : Boolean,
-    var isSelected : Boolean
+    var isSelected : Boolean,
+    var alive: Boolean
 )
