@@ -85,11 +85,11 @@ class CookieAdapter(
         else if (!cookie.owned && !cookie.purchasable){
             holder.selectButton.setImageResource(R.drawable.select_button_cookie_lock) // 잠금
             if (cookie.name == "좀비맛 쿠키") {
-                holder.cookiePriceOrCondition.text = "1시간 동안 달리기"
+                holder.cookiePriceOrCondition.text = "1시간 동안 달리기  "
             } else if (cookie.name == "천사맛 쿠키") {
-                holder.cookiePriceOrCondition.text = "7일 연속 성공"
+                holder.cookiePriceOrCondition.text = "7일 연속 성공  "
             } else if (cookie.name == "버터크림맛 쿠키") {
-                holder.cookiePriceOrCondition.text = "누적 10km 달리기"
+                holder.cookiePriceOrCondition.text = "누적 10km 달리기  "
             } else if (cookie.name == "용감한맛 쿠키") {
                 holder.cookiePriceOrCondition.text = ""
             } else if (cookie.name == "명랑한맛 쿠키") {

@@ -40,7 +40,7 @@ class MyFragment : Fragment(R.layout.fragment_my) {
         val view = inflater.inflate(R.layout.fragment_my, container, false)
 
         // 버튼 참조
-        val button = view.findViewById<Button>(R.id.button)
+        val button = view.findViewById<Button>(R.id.logout_button)
         button.setOnClickListener {
             showPopup()
         }
