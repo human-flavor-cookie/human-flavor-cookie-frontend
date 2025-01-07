@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="300dp"
+    android:layout_height="220dp"
+    android:layout_gravity="center_horizontal"
+    android:background="@drawable/logout_background">
+
+    <FrameLayout
+        android:id="@+id/frameLayout2"
+        android:layout_width="300dp"
+        android:layout_height="55dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.1">
+
+        <EditText
+            android:id="@+id/target_distance"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginVertical="6dp"
+            android:background="@drawable/login_background"
+            android:fontFamily="@font/cookierun_regular"
+            android:hint="목표 km 수 설정"
+            android:inputType="numberDecimal"
+            android:lineSpacingExtra="1dp"
+            android:paddingHorizontal="20dp"
+            android:textColorHint="#E3B88D"
+            android:textSize="18sp" />
+
+    </FrameLayout>
+
+
+    <LinearLayout
+        android:layout_width="298dp"
+        android:layout_height="114dp"
+        android:layout_marginTop="30dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/frameLayout2">
+
+        <ImageButton
+            android:id="@+id/go_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@android:color/transparent"
+            android:layout_marginBottom="10dp"
+            android:fontFamily="@font/cookierun_regular"
+            android:src="@drawable/logout_go"
+            android:textSize="18sp" />
+
+        <ImageButton
+            android:id="@+id/cancel_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="20dp"
+            android:background="@android:color/transparent"
+            android:fontFamily="@font/cookierun_regular"
+            android:src="@drawable/logout_cancel"
+            android:textSize="18sp" />
+    </LinearLayout>
+    <!-- 자식 뷰 -->
+</androidx.constraintlayout.widget.ConstraintLayout>
