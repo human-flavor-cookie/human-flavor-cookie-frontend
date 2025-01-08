@@ -1,5 +1,4 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -24,30 +23,48 @@
                 android:id="@+id/main_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/cookierun_regular"
-                android:layout_marginTop="23dp"
                 android:layout_marginLeft="25dp"
+                android:layout_marginTop="23dp"
+                android:fontFamily="@font/cookierun_regular"
                 android:gravity="left|center_horizontal"
+                android:text="용쿠사기 님"
                 android:textColor="@color/font_color"
-                android:textSize="20dp"
-                android:text="용쿠사기 님" />
+                android:textSize="20dp" />
 
             <!--알림-->
-            <ImageView
+            <FrameLayout
                 android:id="@+id/notification_button"
-                android:layout_width="25dp"
-                android:layout_height="30dp"
-                android:layout_marginTop="23dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                app:srcCompat="@drawable/notifications" />
+                android:layout_marginTop="23dp">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="27dp"
+                    app:srcCompat="@drawable/notifications" />
+
+                <TextView
+                    android:id="@+id/notification_count"
+                    android:layout_width="13dp"
+                    android:layout_height="13dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="2dp"
+                    android:text="1"
+                    android:textSize="9dp"
+                    android:fontFamily="@font/cookierun_regular"
+                    android:textColor="@color/white"
+                    android:gravity="center"
+                    android:background="@drawable/circle_red" />
+            </FrameLayout>
 
             <!-- 재화 -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="end|center_horizontal"
-                android:layout_marginRight="25dp"
                 android:layout_marginTop="20dp"
+                android:layout_marginRight="25dp"
+                android:gravity="end|center_horizontal"
                 android:orientation="vertical">
 
                 <!-- coin -->
@@ -56,16 +73,18 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
                     android:orientation="horizontal">
+
                     <TextView
                         android:id="@+id/main_coin"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="2310"
+                        android:background="@drawable/coin_background"
                         android:fontFamily="@font/cookierun_bold"
-                        android:textColor="#FFFFFF"
                         android:gravity="end|center_vertical"
                         android:paddingRight="15dp"
-                        android:background="@drawable/coin_background" />
+                        android:text="2310"
+                        android:textColor="#FFFFFF" />
+
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -82,12 +101,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:gravity="center"
-            android:fontFamily="@font/cookierun_bold"
-            android:textColor="@color/font_color"
             android:layout_marginTop="55dp"
-            android:textSize="25dp"
-            android:text="오늘 총 걸음수 : \n8213" />
+            android:fontFamily="@font/cookierun_bold"
+            android:gravity="center"
+            android:text="오늘 총 걸음수 : \n8213"
+            android:textColor="@color/font_color"
+            android:textSize="25dp" />
 
         <LinearLayout
             android:layout_width="466dp"
@@ -131,43 +150,43 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:gravity="center"
-            android:fontFamily="@font/cookierun_bold"
-            android:textColor="@color/font_color"
             android:layout_marginTop="20dp"
-            android:textSize="25dp"
-            android:text="70%" />
+            android:fontFamily="@font/cookierun_bold"
+            android:gravity="center"
+            android:text="70%"
+            android:textColor="@color/font_color"
+            android:textSize="25dp" />
 
         <TextView
             android:id="@+id/distance_now"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:gravity="center"
             android:fontFamily="@font/cookierun_bold"
+            android:gravity="center"
+            android:text="현재: 15km"
             android:textColor="@color/font_color"
-            android:textSize="18dp"
-            android:text="현재: 15km" />
+            android:textSize="18dp" />
 
         <TextView
             android:id="@+id/main_goal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:gravity="center"
             android:fontFamily="@font/cookierun_bold"
+            android:gravity="center"
+            android:text="오늘의 목표: 15km"
             android:textColor="@color/font_color"
-            android:textSize="18dp"
-            android:text="오늘의 목표: 15km" />
+            android:textSize="18dp" />
 
         <ImageView
             android:id="@+id/main_start"
-            android:layout_marginTop="50dp"
             android:layout_width="370dp"
             android:layout_height="45dp"
             android:layout_gravity="center"
-            android:textSize="25dp"
-            android:src="@drawable/run_button" />
+            android:layout_marginTop="50dp"
+            android:src="@drawable/run_button"
+            android:textSize="25dp" />
     </LinearLayout>
 
     <!-- 맨 아래 고정될 LinearLayout -->
@@ -180,11 +199,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:gravity="center"
             android:fontFamily="@font/cookierun_bold"
+            android:gravity="center"
+            android:text="어서 가... 난 이제 틀렸어..."
             android:textColor="#000000"
-            android:textSize="12dp"
-            android:text="어서 가... 난 이제 틀렸어..." />
+            android:textSize="12dp" />
 
         <ImageView
             android:layout_width="wrap_content"

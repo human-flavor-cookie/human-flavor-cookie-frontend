@@ -242,6 +242,10 @@ class MainFragment : Fragment() {
                     // 현재 쿠키
                     var current_cookie = response.body()?.currentCookieId
                     binding.mainCookie.setImageResource(cookiePick(current_cookie))
+
+                    //알람 개수
+                    var pendingCount = response.body()?.pendingCount
+                    binding.notificationCount.text = pendingCount.toString()
                 }
             }
         } catch (e: Exception) {

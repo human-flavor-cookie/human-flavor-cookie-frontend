@@ -74,7 +74,7 @@ class Tier_Fragment : Fragment(R.layout.fragment_tier) {
 
     private fun streakGet(successStreak: Boolean): String {
         return when (successStreak) {
-            false ->  "연속 실패⚡"
+            false ->  "실패 중⚡"
             true -> "달리는 중🔥"
         }
     }

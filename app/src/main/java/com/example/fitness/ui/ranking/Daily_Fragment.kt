@@ -2,6 +2,7 @@ package com.example.fitness.ui.ranking
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -10,33 +11,32 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fitness.R
 import com.example.fitness.api.RetrofitClient
-import com.example.fitness.dto.ranking.AllRankingResponse
+import com.example.fitness.dto.ranking.DailyRankingResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class All_Fragment : Fragment(R.layout.fragment_all) {
-    private var rankingList: AllRankingResponse? = null
+class Daily_Fragment : Fragment(R.layout.fragment_friend) {
+    private var rankingList: DailyRankingResponse? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         // RecyclerView 설정
         val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
-        val layoutManager = LinearLayoutManager(context) // 수직 스크롤
         recyclerView.layoutManager = LinearLayoutManager(context) // 수직 스크롤
 
         lifecycleScope.launch{
-            rankingList = ranking()
+            rankingList = dailyRanking()
             // 데이터 설정
             val rankingList = rankingList?.allRanks?.map { rank ->
-            RankingItem(
-                rank.rank,
-                rank.userName,
-                "${String.format("%.2f", rank.totalDistance)}km",
-                rank.consecutiveDays,
-                "일째", streakGet(rank.successStreak),
-                cookiePick(rank.currentCookieId)
+                RankingItem(
+                    rank.dailyRank,
+                    rank.userName,
+                    "${String.format("%.2f", rank.dailyDistance)}km",
+                    rank.consecutiveDays,
+                    "일째", streakGet(rank.successStreak),
+                    cookiePick(rank.currentCookieId)
                 )
             } ?: listOf()
             // 어댑터 설정
@@ -45,15 +45,21 @@ class All_Fragment : Fragment(R.layout.fragment_all) {
         }
     }
 
-    private suspend fun ranking(): AllRankingResponse? {
+    // 데이터 목록 (예시로 간단한 텍스트 리스트)
+    private fun getData(): List<String> {
+        return listOf("Tab 2 - Item 1", "Tab 2 - Item 2", "Tab 2 - Item 3")
+    }
+
+    private suspend fun dailyRanking(): DailyRankingResponse? {
         return try {
             val token = requireContext()
                 .getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
                 .getString("jwt_token", null)
             token?.let {
                 val response = withContext(Dispatchers.IO) {
-                    RetrofitClient.instance.ranking(it)
+                    RetrofitClient.instance.dailyRanking(it)
                 }
+                Log.d("d", response.body().toString())
                 if (response.code() == 200) response.body() else null
             }
         } catch (e: Exception) {
@@ -75,7 +81,7 @@ class All_Fragment : Fragment(R.layout.fragment_all) {
 
     private fun streakGet(successStreak: Boolean): String {
         return when (successStreak) {
-            false ->  "연속 실패⚡"
+            false ->  "실패 중⚡"
             true -> "달리는 중🔥"
         }
     }
