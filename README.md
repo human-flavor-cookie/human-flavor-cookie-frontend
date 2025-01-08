@@ -9,7 +9,7 @@
 쿠키와 함께 달리며 매일매일 성장하는 나를 만나보세요!
 인간 맛쿠키는 쿠키런의 재미와 함께 여러분의 달리기 기록을 특별하게 관리할 수 있는 앱이에요. 기록 관리도 게임처럼, 더 쉽고 더 즐겁게 해보는 건 어때요? 😊
 
-![Group 67](https://github.com/yangjh05/MadCampWeek2/assets/104543271/eb527ee0-6efd-4d36-ae8e-c976c1d39f53)
+![KakaoTalk_Photo_2025-01-08-14-36-16](https://github.com/user-attachments/assets/cdc9e0d7-99c0-4ea4-a393-a47dbea9352e)
 
 🍪 인간 맛쿠키의 특별한 쿠키들을 만나보세요! 🏃‍♀️
 
