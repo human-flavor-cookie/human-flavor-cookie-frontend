@@ -11,7 +11,7 @@ import com.example.fitness.dto.friend.PendingResponseDto
 import com.example.fitness.dto.friend.RespondFriendRequestDto
 import com.example.fitness.dto.my.MypageResponse
 import com.example.fitness.dto.my.UpdatePassword
-import com.example.fitness.dto.ranking.AllRankingResponse
+import com.example.fitness.dto.ranking.FriendRankingResponse
 import com.example.fitness.dto.ranking.DailyRankingResponse
 import com.example.fitness.dto.ranking.TargetRankingResponse
 import com.example.fitness.dto.running.RunningRequest
@@ -63,8 +63,8 @@ interface ApiService {
     suspend fun cookiePurchase(@Header("Authorization") token: String, @Body request: CookieChangeRequestDto): Response<Map<String, String>>
 
     //ranking
-    @GET("member/ranking")
-    suspend fun ranking(@Header("Authorization") token: String): Response<AllRankingResponse>
+    @GET("member/friendranking")
+    suspend fun friendRanking(@Header("Authorization") token: String): Response<FriendRankingResponse>
 
     @GET("member/dailyranking")
     suspend fun dailyRanking(@Header("Authorization") token: String): Response<DailyRankingResponse>

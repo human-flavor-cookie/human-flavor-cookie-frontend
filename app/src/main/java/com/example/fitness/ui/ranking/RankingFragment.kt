@@ -13,8 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.fitness.R
 import com.example.fitness.api.RetrofitClient
 import com.example.fitness.databinding.FragmentRankingBinding
-import com.example.fitness.dto.my.MypageResponse
-import com.example.fitness.dto.ranking.AllRankingResponse
+import com.example.fitness.dto.ranking.FriendRankingResponse
 import com.example.fitness.dto.ranking.DailyRankingResponse
 import com.example.fitness.dto.ranking.TargetRankingResponse
 import com.google.android.material.tabs.TabLayout
@@ -30,10 +29,10 @@ class RankingFragment : Fragment(R.layout.fragment_ranking) {
     private lateinit var binding: FragmentRankingBinding
 
     // 랭킹 데이터를 저장할 변수들
-    private var rankingList: AllRankingResponse? = null
+    private var friendRankingList: FriendRankingResponse? = null
     private var dailyRankingList: DailyRankingResponse? = null
     private var targetRankingList: TargetRankingResponse? = null
-    private var rankingListAll: List<RankingItem> = listOf()
+    private var rankingListFriend: List<RankingItem> = listOf()
     private var rankingListDaily: List<RankingItem> = listOf()
     private var rankingListTier: List<RankingItem> = listOf()
     private var rankingListMe: List<RankingItem> = listOf()
@@ -55,23 +54,35 @@ class RankingFragment : Fragment(R.layout.fragment_ranking) {
 
     }
 
+    @SuppressLint("SetTextI18n", "DefaultLocale")
     private suspend fun fetchRankingData() {
-        rankingList = ranking()
+        friendRankingList = friendRanking()
         dailyRankingList = dailyRanking()
         targetRankingList = targetRanking()
         val targetTier = view?.findViewById<TextView>(R.id.textView2)
-        targetTier?.text = targetRankingList?.userRank?.currentTier?.toInt().toString() +
-            "km 도전 중🔥"
-        rankingListAll = rankingList?.top3?.map { rank ->
+        targetTier?.text = targetRankingList?.userRank?.currentTier?.toInt().toString() + "km 도전 중🔥"
+        Log.d("list", friendRankingList.toString())
+        rankingListFriend = friendRankingList?.top3?.map { rank ->
             RankingItem(
-                rank.rank,
+                rank.friendRank,
                 rank.userName,
-                "${String.format("%.2f", rank.totalDistance)}km",
+                "${String.format("%.2f", rank.dailyDistance)}km",
                 rank.consecutiveDays,
-                "일째", streakGet(rank.successStreak),
+                "일째",
+                streakGet(rank.successStreak),
                 cookiePick(rank.currentCookieId)
             )
-        } ?: listOf()
+        }?.let { list ->
+            // 부족한 개수만큼 빈 값 추가
+            list + List(3 - list.size) {
+                RankingItem(0,"","0.00km", 0,"","",0          // 기본 쿠키 ID
+                )
+            }
+        } ?: List(3) {
+            RankingItem(0,"","0.00km",0, "","",0
+            )
+        }
+
 
         rankingListDaily = dailyRankingList?.top3?.map { rank ->
             RankingItem(
@@ -93,33 +104,40 @@ class RankingFragment : Fragment(R.layout.fragment_ranking) {
                 "일째", streakGet(rank.successStreak),
                 cookiePick(rank.currentCookieId)
             )
-        } ?: listOf()
+        } ?.let { list ->
+            // 부족한 개수만큼 빈 값 추가
+            list + List(3 - list.size) {
+                RankingItem(0,"","0.00km", 0,"","",0          // 기본 쿠키 ID
+                )
+            }
+        } ?: List(3) {
+            RankingItem(0,"","0.00km",0, "","",0
+            )
+        }
 
-        rankingListMe = rankingList?.userRank?.let { userRank ->
-            val mainRanking = listOf(
+        rankingListMe = dailyRankingList?.userRank?.let { dailyUserRank ->
+            val dailyRanking = listOf(
                 RankingItem(
-                    userRank.rank,
-                    userRank.userName,
-                    "${String.format("%.2f", userRank.totalDistance)}km",
-                    userRank.consecutiveDays,
-                    "일째", streakGet(userRank.successStreak),
-                    cookiePick(userRank.currentCookieId)
+                    dailyUserRank.dailyRank,
+                    dailyUserRank.userName,
+                    "${String.format("%.2f", dailyUserRank.dailyDistance)}km",
+                    dailyUserRank.consecutiveDays,
+                    "일째", streakGet(dailyUserRank.successStreak),
+                    cookiePick(dailyUserRank.currentCookieId)
                 )
             )
-            // dailyRankingList의 userRank 추가
-            val dailyRanking = dailyRankingList?.userRank?.let { dailyUserRank ->
+            val friendRanking = friendRankingList?.userRank?.let { friendRank ->
                 listOf(
                     RankingItem(
-                        dailyUserRank.dailyRank,
-                        dailyUserRank.userName,
-                        "${String.format("%.2f", dailyUserRank.dailyDistance)}km",
-                        dailyUserRank.consecutiveDays,
+                        friendRank.friendRank,
+                        friendRank.userName,
+                        "${String.format("%.2f", friendRank.dailyDistance)}km",
+                        friendRank.consecutiveDays,
                         "일째", "오늘도 열심히! 💪",
-                        cookiePick(dailyUserRank.currentCookieId)
+                        cookiePick(friendRank.currentCookieId)
                     )
                 )
             } ?: listOf()
-            // dailyRankingList의 userRank 추가
             val targetRanking = targetRankingList?.userRank?.let { targetUserRank ->
                 listOf(
                     RankingItem(
@@ -133,7 +151,7 @@ class RankingFragment : Fragment(R.layout.fragment_ranking) {
                 )
             } ?: listOf()
             // 두 리스트 합치기
-            mainRanking + dailyRanking + targetRanking
+            dailyRanking + friendRanking + targetRanking
         } ?: listOf()
 
     }
@@ -150,8 +168,8 @@ class RankingFragment : Fragment(R.layout.fragment_ranking) {
                 .inflate(R.layout.custom_tab, null)
             val tabText = customView.findViewById<TextView>(R.id.tab_text)
             tabText.text = when (position) {
-                0 -> "전체"
-                1 -> "일일"
+                0 -> "일일"
+                1 -> "친구"
                 2 -> "티어"
                 else -> "티어"
             }
@@ -172,8 +190,8 @@ class RankingFragment : Fragment(R.layout.fragment_ranking) {
     @SuppressLint("SetTextI18n")
     private fun updateTabContent(tabPosition: Int) {
         val list = when (tabPosition) {
-            0 -> rankingListAll
-            1 -> rankingListDaily
+            0 -> rankingListDaily
+            1 -> rankingListFriend
             2 -> rankingListTier
             else -> rankingListTier
         }
@@ -211,14 +229,14 @@ class RankingFragment : Fragment(R.layout.fragment_ranking) {
 
     }
 
-    private suspend fun ranking(): AllRankingResponse? {
+    private suspend fun friendRanking(): FriendRankingResponse? {
         return try {
             val token = requireContext()
                 .getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
                 .getString("jwt_token", null)
             token?.let {
                 val response = withContext(Dispatchers.IO) {
-                    RetrofitClient.instance.ranking(it)
+                    RetrofitClient.instance.friendRanking(it)
                 }
                 if (response.code() == 200) response.body() else null
             }
@@ -277,7 +295,7 @@ class RankingFragment : Fragment(R.layout.fragment_ranking) {
 
     private fun streakGet(successStreak: Boolean): String {
         return when (successStreak) {
-            false ->  "실패중⚡"
+            false ->  "실패 중⚡"
             true -> "달리는 중🔥"
         }
     }

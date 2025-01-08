@@ -61,6 +61,7 @@ class MainFragment : Fragment() {
     private var _binding : FragmentMainBinding? = null
     private val binding : FragmentMainBinding
         get() = _binding!!
+    private var count: Int = 0
 
     private var mediaPlayer: MediaPlayer? = null
     private var currentSongIndex = 0
@@ -297,6 +298,11 @@ class MainFragment : Fragment() {
                     // 현재 쿠키
                     var current_cookie = response.body()?.currentCookieId
                     binding.mainCookie.setImageResource(cookiePick(current_cookie))
+
+                    //알람 개수
+                    var pendingCount = response.body()?.pendingCount
+                    binding.notificationCount.text = pendingCount.toString()
+                    count = response.body()?.pendingCount!!
                 }
             }
         } catch (e: Exception) {
@@ -406,16 +412,26 @@ class MainFragment : Fragment() {
                         context = requireContext(),
                         notifications = updatedItems,
                         onAcceptClick = { notificationItem ->
-                            handleFriendResponse(RespondFriendRequestDto(notificationItem.id, "ACCEPT")) { updateAdapter(dialog) }
+                            handleFriendResponse(RespondFriendRequestDto(notificationItem.id, "ACCEPT")) {
+                                updateAdapter(dialog)
+                                binding.notificationCount.text = count.toString()
+                            }
                         },
                         onRejectClick = { notificationItem ->
-                            handleFriendResponse(RespondFriendRequestDto(notificationItem.id, "REJECT")) { updateAdapter(dialog) }
+                            handleFriendResponse(RespondFriendRequestDto(notificationItem.id, "REJECT")) {
+                                updateAdapter(dialog)
+                                binding.notificationCount.text = count.toString()}
                         }
                     )
                     dialog.show() // 데이터 로드 완료 후 다이얼로그 표시
                 } else {
                     dialog.dismiss()
                     Toast.makeText(requireContext(), "친구 요청 목록이 없습니다.", Toast.LENGTH_SHORT).show()
+
+                    // MainFragment가 포함된 Activity 다시 시작
+                    val intent = requireActivity().intent
+                    requireActivity().finish()
+                    requireActivity().startActivity(intent)
                 }
             }
         }

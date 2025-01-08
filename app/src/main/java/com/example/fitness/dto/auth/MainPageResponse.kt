@@ -5,5 +5,6 @@ data class MainPageResponse(
     val coin: Int,
     val distanceToday: Double,
     val goalDistance: Double,
-    val currentCookieId: Long
+    val currentCookieId: Long,
+    val pendingCount: Int
 )
