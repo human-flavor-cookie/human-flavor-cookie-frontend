@@ -177,6 +177,8 @@ class MainFragment : Fragment() {
                     val bundle = Bundle()
                     bundle.putInt("coin", dto.coin)
                     bundle.putLong("currentCookie", dto.currentCookieId)
+                    bundle.putDouble("goalDistance", dto.goalDistance)
+                    bundle.putDouble("distanceToday", dto.distanceToday)
                     fragment.arguments = bundle
 
                     val transaction = parentFragmentManager.beginTransaction()

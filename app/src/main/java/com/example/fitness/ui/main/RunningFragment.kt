@@ -87,8 +87,12 @@ class RunningFragment : Fragment() {
                 showCustomDialog()
             }
             val coin = arguments?.getInt("coin")
+            Log.d("RunningFragment", "Coin: $coin")
             view.findViewById<TextView>(R.id.running_coin).text = coin.toString()
             val currentCookie = arguments?.getLong("currentCookie")
+            Log.d("RunningFragment", "Current Cookie ID: $currentCookie")
+            val goalDistacne = arguments?.getDouble("goalDistance")
+            Log.d("RunningFragment", "Goal Distance: $goalDistacne")
             val gifResId = cookiePick(currentCookie)
             if (gifResId != -1) {
                 val imageView = view.findViewById<ImageView>(R.id.running_cookie)
@@ -287,7 +291,11 @@ class RunningFragment : Fragment() {
                             // 6' 11'' 형태로 포맷팅
                             runningSpeed.text = String.format("%d'%02d''", minutes, seconds)
                         }
-                        runningRemainDistanace.text = String.format("%.2f km", 5 -totalDistance / 1000)
+                        val goalDistacne = arguments?.getDouble("goalDistance")
+                        val distanceToday = arguments?.getDouble("distanceToday")
+                        val totalDistanceKM = totalDistance / 1000
+                        val distanceLeft = goalDistacne?.minus(distanceToday!!)?.minus(totalDistanceKM)
+                        runningRemainDistanace.text = String.format("%.2f km",  distanceLeft)
                     }
                 }
             }
