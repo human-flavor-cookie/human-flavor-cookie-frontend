@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -60,6 +61,17 @@ class MainFragment : Fragment() {
     private var _binding : FragmentMainBinding? = null
     private val binding : FragmentMainBinding
         get() = _binding!!
+
+    private var mediaPlayer: MediaPlayer? = null
+    private var currentSongIndex = 0
+
+    // 음악 파일 배열
+    private val musicList = listOf(
+
+        R.raw.cookierun_lobby,
+        R.raw.cookierun_mouth_mod,
+        R.raw.cookierun_main
+    )
 
     private lateinit var healthConnectClient: HealthConnectClient
     private val permissionList = setOf(
@@ -119,8 +131,49 @@ class MainFragment : Fragment() {
             connectHealthData()
         }
 
+        val musicImage = view.findViewById<ImageView>(R.id.dead_cookie)
+
+        // MediaPlayer 초기화
+        mediaPlayer = MediaPlayer.create(requireContext(), musicList[currentSongIndex])
+        mediaPlayer?.isLooping = true
+        mediaPlayer?.start()
+
+        // 이미지 클릭 이벤트 처리
+        musicImage.setOnClickListener {
+            switchMusic()
+        }
     }
 
+    private fun switchMusic() {
+        // 현재 음악 중지 및 해제
+        mediaPlayer?.stop()
+        mediaPlayer?.release()
+
+        // 다음 음악으로 변경
+        currentSongIndex = (currentSongIndex + 1) % musicList.size
+        mediaPlayer = MediaPlayer.create(requireContext(), musicList[currentSongIndex])
+        Log.d("currentIndex", currentSongIndex.toString())
+        mediaPlayer?.isLooping = true
+        mediaPlayer?.start()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Fragment가 화면에 다시 나타났을 때 음악 재생
+        mediaPlayer?.start()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        // Fragment가 화면에서 벗어나면 음악 멈춤
+        mediaPlayer?.pause()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        mediaPlayer?.release()
+        mediaPlayer = null
+    }
     private fun connectHealthData() {
         // 1. Health Connect 앱 유무 확인
         val availabilityStatus = HealthConnectClient.getSdkStatus(requireContext(), Constants.HEALTH_CONNECT_PACKAGE_NAME)
