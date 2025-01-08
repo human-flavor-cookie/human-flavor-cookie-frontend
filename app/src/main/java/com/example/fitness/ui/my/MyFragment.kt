@@ -230,7 +230,7 @@ class MyFragment : Fragment(R.layout.fragment_my) {
 
         // 이전 목표 거리 가져오기
         val sharedPreferences = requireContext().getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
-        val previousGoal = sharedPreferences.getFloat("previous_goal", 0f)
+        val previousGoal = sharedPreferences.getFloat("dailyGoal", 0f)
         // AlertDialog 생성
         val dialog = AlertDialog.Builder(requireContext())
 
@@ -250,7 +250,7 @@ class MyFragment : Fragment(R.layout.fragment_my) {
                     dialog.dismiss()
                     onGoalSet(goal) // 서버에 전송
                     // 새로운 목표를 SharedPreferences에 저장
-                    sharedPreferences.edit().putFloat("previous_goal", goal).apply()
+                    sharedPreferences.edit().putFloat("dailyGoal", goal).apply()
                 } else {
                     Toast.makeText(requireContext(), "이전 목표보다 큰 값을 입력해주세요.", Toast.LENGTH_SHORT).show()
                 }

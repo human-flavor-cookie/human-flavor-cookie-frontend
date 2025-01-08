@@ -66,13 +66,22 @@ class CookieAdapter(
         //holder.cookiePriceOrCondition.text = cookie.priceOrConditon
         // isDisabled 조건에 따라 select_button 이미지 변경
         // 깨진경우..해금 됐지만..
+
+        if (cookie.isSelected) {
+            holder.selectButton.setImageResource(R.drawable.cookie_using)
+            if (cookie.purchasable) {
+                holder.selectButton.setImageResource(R.drawable.cookie_money)
+                holder.cookiePriceOrCondition.text = cookie.priceOrConditon
+            }
+        }
+
         if (cookie.purchasable) {
             holder.selectButton.setImageResource(R.drawable.cookie_price_background) // 비활성화 이미지
             holder.cookiePriceOrCondition.text = cookie.priceOrConditon
             //깨진 경우
             if(!cookie.alive){
                 if (cookie.name == "명랑한맛 쿠키") {
-                    holder.cookieImage.setImageResource(R.drawable.happy_cookie_dead)
+                    holder.cookieImage.setImageResource(R.drawable.happy_die)
                 } else if (cookie.name == "버터크림맛 쿠키") {
                     holder.cookieImage.setImageResource(R.drawable.buttecookie_die)
                 } else if (cookie.name == "천사맛 쿠키") {
@@ -84,7 +93,7 @@ class CookieAdapter(
         else if (!cookie.owned && !cookie.purchasable){
             holder.selectButton.setImageResource(R.drawable.select_button_cookie_lock) // 잠금
             if (cookie.name == "좀비맛 쿠키") {
-                holder.cookiePriceOrCondition.text = "1시간 동안 달리기  "
+                holder.cookiePriceOrCondition.text = "친구 5명이상 달성 "
             } else if (cookie.name == "천사맛 쿠키") {
                 holder.cookiePriceOrCondition.text = "7일 연속 성공  "
             } else if (cookie.name == "버터크림맛 쿠키") {
@@ -100,6 +109,10 @@ class CookieAdapter(
         //해금 됐고.. 쿠키 안부셨는데.. 선택 안한 경우
         else if (cookie.owned && !cookie.isSelected){
             holder.selectButton.setImageResource(R.drawable.select_cookie) // 해금
+            holder.cookiePriceOrCondition.text = ""
+        }
+        else if (cookie.isSelected) {
+            holder.cookiePriceOrCondition.text = ""
         }
 
         // 특정 조건에서 흑백 처리 - 해금 안된 경우 + 깨진 경우
@@ -112,6 +125,7 @@ class CookieAdapter(
         // selectButton 클릭 리스너 - 해금됐고 쿠키 안부셔졌는데 선택 안한 경우
         holder.selectButton.setOnClickListener {
             if (cookie.owned && !cookie.isSelected) {
+                holder.cookiePriceOrCondition.text = ""
                 // 모든 쿠키 항목의 isSelected 값을 false로 설정
                 cookieList.forEachIndexed { index, cookieItem ->
                     // 각 항목의 isSelected를 false로 설정
@@ -138,9 +152,7 @@ class CookieAdapter(
                 )
             }
         }
-        if (cookie.isSelected) {
-            holder.selectButton.setImageResource(R.drawable.cookie_using)
-        }
+
     }
 
     override fun getItemCount(): Int {
