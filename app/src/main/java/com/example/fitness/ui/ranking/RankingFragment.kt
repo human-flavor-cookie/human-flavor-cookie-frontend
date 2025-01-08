@@ -107,7 +107,7 @@ class RankingFragment : Fragment(R.layout.fragment_ranking) {
         } ?.let { list ->
             // 부족한 개수만큼 빈 값 추가
             list + List(3 - list.size) {
-                RankingItem(0,"","0.00km", 0,"","",0          // 기본 쿠키 ID
+                RankingItem(0,"","0.00km", 0,"","",0
                 )
             }
         } ?: List(3) {
@@ -133,7 +133,7 @@ class RankingFragment : Fragment(R.layout.fragment_ranking) {
                         friendRank.userName,
                         "${String.format("%.2f", friendRank.dailyDistance)}km",
                         friendRank.consecutiveDays,
-                        "일째", "오늘도 열심히! 💪",
+                        "일째", streakGet(friendRank.successStreak),
                         cookiePick(friendRank.currentCookieId)
                     )
                 )
@@ -145,7 +145,7 @@ class RankingFragment : Fragment(R.layout.fragment_ranking) {
                         targetUserRank.userName,
                         "${String.format("%.2f", targetUserRank.dailyDistance)}km",
                         targetUserRank.consecutiveDays,
-                        "일째", "오늘도 열심히! 💪",
+                        "일째", streakGet(targetUserRank.successStreak),
                         cookiePick(targetUserRank.currentCookieId)
                     )
                 )
@@ -224,6 +224,7 @@ class RankingFragment : Fragment(R.layout.fragment_ranking) {
         binding.rank.text = user.rank.toString()
         binding.rankerDistance.text = user.distance
         binding.rankerSuccess.text = user.success.toString()
+        binding.rankingRunning.text = user.status
         Log.d("tabposition", "tabPosition ${tabPosition}")
         // "Tier" 탭에서만 View와 TextView를 표시
 
