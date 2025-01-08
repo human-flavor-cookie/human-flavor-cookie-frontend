@@ -16,6 +16,7 @@ import android.view.Window
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -31,6 +32,7 @@ import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.records.TotalCaloriesBurnedRecord
 import androidx.health.connect.client.request.ReadRecordsRequest
 import androidx.health.connect.client.time.TimeRangeFilter
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fitness.Constants
@@ -39,6 +41,7 @@ import com.example.fitness.api.RetrofitClient
 import com.example.fitness.databinding.FragmentMainBinding
 import com.example.fitness.dto.auth.MainPageResponse
 import com.example.fitness.dto.friend.PendingResponseDto
+import com.example.fitness.dto.friend.RespondFriendRequestDto
 import com.example.fitness.dto.running.UpdateTarget
 import com.example.fitness.ui.ranking.RankingItem
 import com.example.fitness.util.CustomToast
@@ -326,31 +329,50 @@ class MainFragment : Fragment() {
         }
     }
 
+    @SuppressLint("MissingInflatedId")
     private fun showNotificationsDialog() {
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.notification_popup, null)
         val recyclerView: RecyclerView = dialogView.findViewById(R.id.notification_recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        // 네트워크 요청 후 RecyclerView 업데이트
-        CoroutineScope(Dispatchers.Main).launch {
-            val pendingList = pendingList() ?: emptyList() // 비동기 함수 호출
-            Log.d("d", "네트워크 실행")
-            if (pendingList.isNotEmpty()) {
-                val list = pendingList.map { member ->
-                    NotificationAdapter.NotificationItem(
-                        member.friendRequestId.toString(),
-                        "안녕하세요, 반가워요!"
+        // 다이얼로그와 RecyclerView 업데이트 로직
+        fun updateAdapter(dialog: AlertDialog) {
+            CoroutineScope(Dispatchers.Main).launch {
+                val updatedList = pendingList() ?: emptyList()
+                if (updatedList.isNotEmpty()) {
+                    val updatedItems = updatedList.map { member ->
+                        NotificationAdapter.NotificationItem(
+                            member.requesterName,
+                            member.requesterEmail,
+                            member.friendRequestId
+                        )
+                    }
+                    recyclerView.adapter = NotificationAdapter(
+                        context = requireContext(),
+                        notifications = updatedItems,
+                        onAcceptClick = { notificationItem ->
+                            handleFriendResponse(RespondFriendRequestDto(notificationItem.id, "ACCEPT")) { updateAdapter(dialog) }
+                        },
+                        onRejectClick = { notificationItem ->
+                            handleFriendResponse(RespondFriendRequestDto(notificationItem.id, "REJECT")) { updateAdapter(dialog) }
+                        }
                     )
+                    dialog.show() // 데이터 로드 완료 후 다이얼로그 표시
+                } else {
+                    dialog.dismiss()
+                    Toast.makeText(requireContext(), "친구 요청 목록이 없습니다.", Toast.LENGTH_SHORT).show()
                 }
-                val dialog = AlertDialog.Builder(requireContext())
-                    .setView(dialogView)
-                    .setCancelable(true)
-                    .create()
-                dialog.show()
-                recyclerView.adapter = NotificationAdapter(requireContext(), list)
-            } else {
-                Toast.makeText(requireContext(), "친구 요청 목록이 없습니다.", Toast.LENGTH_SHORT).show()
             }
+        }
+
+        // 네트워크 요청 후 다이얼로그 표시
+        CoroutineScope(Dispatchers.Main).launch {
+            val dialog = AlertDialog.Builder(requireContext())
+                .setView(dialogView)
+                .setCancelable(true)
+                .create()
+
+            updateAdapter(dialog) // 데이터 로드 및 다이얼로그 업데이트
         }
     }
 
@@ -378,4 +400,30 @@ class MainFragment : Fragment() {
             null
         }
     }
+
+    private fun handleFriendResponse(
+        request: RespondFriendRequestDto,
+        onSuccess: () -> Unit,
+    ) {
+        lifecycleScope.launch {
+            try {
+                // 토큰 가져오기
+                val token = context?.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+                    ?.getString("jwt_token", null)
+                if (token != null) {
+                    // 네트워크 요청 실행
+                    val response = withContext(Dispatchers.IO) {
+                        RetrofitClient.instance.friendRespond(token, request)
+                    }
+                    if (response.code() == 200) {
+                        Log.d("handleFriendResponse", "응답 성공: ${response.body()}")
+                        onSuccess()
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("handleFriendResponse", "네트워크 오류", e)
+            }
+        }
+    }
+
 }
