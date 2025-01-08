@@ -47,18 +47,18 @@
         app:srcCompat="@drawable/profile_image" />
 
     <ImageView
-        android:id="@+id/imageView4"
+        android:id="@+id/noti_accept"
         android:layout_width="50dp"
         android:layout_height="50dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/imageView7"
+        app:layout_constraintEnd_toStartOf="@+id/noti_no_accept"
         app:layout_constraintHorizontal_bias="0.923"
         app:layout_constraintStart_toEndOf="@+id/imageView3"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/accept_friend" />
 
     <ImageView
-        android:id="@+id/imageView7"
+        android:id="@+id/noti_no_accept"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginEnd="4dp"
